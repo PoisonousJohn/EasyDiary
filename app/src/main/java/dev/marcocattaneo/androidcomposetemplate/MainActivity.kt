@@ -31,7 +31,9 @@ import dev.marcocattaneo.androidcomposetemplate.ui.screen.dashboard.DashboardScr
 import dev.marcocattaneo.androidcomposetemplate.ui.screen.dashboard.DashboardViewModel
 import dev.marcocattaneo.androidcomposetemplate.ui.screen.login.LoginScreen
 import dev.marcocattaneo.androidcomposetemplate.ui.screen.login.LoginViewModel
+import dev.marcocattaneo.androidcomposetemplate.ui.screen.login.MainScreen
 import dev.marcocattaneo.androidcomposetemplate.ui.theme.AndroidcomposetemplateTheme
+import dev.marcocattaneo.androidcomposetemplate.ui.theme.Typography
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -51,7 +53,7 @@ class MainActivity : ComponentActivity() {
                             route = Routes.Login,
                             navigationController = controller
                         ) { _, vm ->
-                            LoginScreen(vm)
+                            MainScreen(emptyList())
                         }
 
                         composable<DashboardViewModel>(

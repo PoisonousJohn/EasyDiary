@@ -24,12 +24,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.SavedStateHandle
 
 @Composable
 fun DashboardScreen(
     dashboardViewModel: DashboardViewModel
-){
+) {
     val username by dashboardViewModel.usernameState.collectAsState()
 
     Column(
@@ -39,4 +41,17 @@ fun DashboardScreen(
     ) {
         Text(text = username)
     }
+}
+
+@Composable
+@Preview
+fun DashboardScreenPreview() {
+    DashboardScreen(
+        dashboardViewModel = DashboardViewModel(
+            SavedStateHandle.createHandle(
+                null,
+                null
+            )
+        )
+    )
 }

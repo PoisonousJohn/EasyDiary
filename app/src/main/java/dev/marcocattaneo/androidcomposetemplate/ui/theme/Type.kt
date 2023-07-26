@@ -42,3 +42,8 @@ val Typography = Typography(
     )
     */
 )
+
+val Typography.body1Secondary: TextStyle
+    get() = body1.copy(color = SecondaryText)
+val Typography.body2Secondary: TextStyle
+    get() = body2.copy(color = SecondaryText)
