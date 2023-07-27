@@ -14,20 +14,12 @@
  * limitations under the License.
  */
 
-package dev.marcocattaneo.androidcomposetemplate
+package pro.fateev.diary.navigation.routing
 
-import org.junit.Test
+interface NavigableRoute<R: ScreenRoute> {
 
-import org.junit.Assert.*
+    val screenRoute: R
 
-/**
- * Example local unit test, which will execute on the development machine (host).
- *
- * See [testing documentation](http://d.android.com/tools/testing).
- */
-class ExampleUnitTest {
-    @Test
-    fun addition_isCorrect() {
-        assertEquals(4, 2 + 2)
-    }
+    val path: String
+
 }

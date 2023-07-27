@@ -14,20 +14,16 @@
  * limitations under the License.
  */
 
-package dev.marcocattaneo.androidcomposetemplate
+package pro.fateev.diary.navigation.routing
 
-import org.junit.Test
-
-import org.junit.Assert.*
+import androidx.navigation.NavType
 
 /**
- * Example local unit test, which will execute on the development machine (host).
- *
- * See [testing documentation](http://d.android.com/tools/testing).
+ * Arguments Options specify for the argument keys used on the Screen Routes
+ * @param type argument type
+ * @param optional true if argument is optional
  */
-class ExampleUnitTest {
-    @Test
-    fun addition_isCorrect() {
-        assertEquals(4, 2 + 2)
-    }
-}
+class ArgumentOptions(
+    var type: NavType<*> = NavType.StringType,
+    var optional: Boolean = false
+)

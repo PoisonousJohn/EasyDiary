@@ -14,20 +14,9 @@
  * limitations under the License.
  */
 
-package dev.marcocattaneo.androidcomposetemplate
+package pro.fateev.diary.di.scope
 
-import org.junit.Test
+import javax.inject.Scope
 
-import org.junit.Assert.*
-
-/**
- * Example local unit test, which will execute on the development machine (host).
- *
- * See [testing documentation](http://d.android.com/tools/testing).
- */
-class ExampleUnitTest {
-    @Test
-    fun addition_isCorrect() {
-        assertEquals(4, 2 + 2)
-    }
-}
+@Scope
+annotation class ComposableScope

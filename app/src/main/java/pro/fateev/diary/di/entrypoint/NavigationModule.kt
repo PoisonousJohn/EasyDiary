@@ -14,20 +14,14 @@
  * limitations under the License.
  */
 
-package dev.marcocattaneo.androidcomposetemplate
+package pro.fateev.diary.di.entrypoint
 
-import org.junit.Test
+import dagger.hilt.EntryPoint
+import dagger.hilt.InstallIn
+import pro.fateev.diary.di.component.ComposableComponent
 
-import org.junit.Assert.*
+@InstallIn(ComposableComponent::class)
+@EntryPoint
+interface ComposableEntryPoint {
 
-/**
- * Example local unit test, which will execute on the development machine (host).
- *
- * See [testing documentation](http://d.android.com/tools/testing).
- */
-class ExampleUnitTest {
-    @Test
-    fun addition_isCorrect() {
-        assertEquals(4, 2 + 2)
-    }
 }

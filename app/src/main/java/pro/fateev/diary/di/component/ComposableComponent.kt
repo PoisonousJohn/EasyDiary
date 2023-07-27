@@ -14,20 +14,25 @@
  * limitations under the License.
  */
 
-package dev.marcocattaneo.androidcomposetemplate
+package pro.fateev.diary.di.component
 
-import org.junit.Test
+import dagger.hilt.DefineComponent
+import dagger.hilt.EntryPoint
+import dagger.hilt.InstallIn
+import dagger.hilt.android.components.ActivityComponent
+import pro.fateev.diary.di.scope.ComposableScope
 
-import org.junit.Assert.*
+@ComposableScope
+@DefineComponent(parent = ActivityComponent::class)
+interface ComposableComponent
 
-/**
- * Example local unit test, which will execute on the development machine (host).
- *
- * See [testing documentation](http://d.android.com/tools/testing).
- */
-class ExampleUnitTest {
-    @Test
-    fun addition_isCorrect() {
-        assertEquals(4, 2 + 2)
-    }
+@DefineComponent.Builder
+interface ComposableComponentBuilder {
+    fun build(): ComposableComponent
+}
+
+@EntryPoint
+@InstallIn(ActivityComponent::class)
+interface ComposableComponentBuilderEntryPoint {
+    val composableBuilder: ComposableComponentBuilder
 }

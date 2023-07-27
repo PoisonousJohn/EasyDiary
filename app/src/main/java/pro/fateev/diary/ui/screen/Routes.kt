@@ -14,20 +14,25 @@
  * limitations under the License.
  */
 
-package dev.marcocattaneo.androidcomposetemplate
+package pro.fateev.diary.ui.screen
 
-import org.junit.Test
+import androidx.navigation.NavType
+import pro.fateev.diary.navigation.routing.ScreenRoute
 
-import org.junit.Assert.*
+object Routes {
 
-/**
- * Example local unit test, which will execute on the development machine (host).
- *
- * See [testing documentation](http://d.android.com/tools/testing).
- */
-class ExampleUnitTest {
-    @Test
-    fun addition_isCorrect() {
-        assertEquals(4, 2 + 2)
-    }
+    object Diary : ScreenRoute(
+        routeDefinition = Definition("diary")
+    )
+
+    object DiaryEntry : ScreenRoute(
+        routeDefinition = Definition("diary-entry") // todo arguments
+    )
+
+    object Dashboard : ScreenRoute(
+        routeDefinition = Definition("dashboard", argumentKeys = listOf(
+            "username" to { type = NavType.StringType; optional = false }
+        ))
+    )
+
 }

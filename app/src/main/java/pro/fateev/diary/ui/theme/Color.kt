@@ -14,20 +14,15 @@
  * limitations under the License.
  */
 
-package dev.marcocattaneo.androidcomposetemplate
+package pro.fateev.diary.ui.theme
 
-import org.junit.Test
+import android.provider.CalendarContract
+import androidx.compose.ui.graphics.Color
 
-import org.junit.Assert.*
-
-/**
- * Example local unit test, which will execute on the development machine (host).
- *
- * See [testing documentation](http://d.android.com/tools/testing).
- */
-class ExampleUnitTest {
-    @Test
-    fun addition_isCorrect() {
-        assertEquals(4, 2 + 2)
-    }
-}
+val Purple200 = Color(0xFFBB86FC)
+val Purple500 = Color(0xFF6200EE)
+val Purple700 = Color(0xFF3700B3)
+val Teal200 = Color(0xFF03DAC5)
+val LightGray = Color.hsv(0f, 0f, 0.5f)
+val AlmostWhite = Color.hsv(0f, 0f, 0.9f)
+val AlmostBlack = Color.hsv(0f, 0f, 0.3f)
