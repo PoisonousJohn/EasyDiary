@@ -29,10 +29,10 @@ import pro.fateev.diary.navigation.composable
 import pro.fateev.diary.ui.screen.Routes
 import pro.fateev.diary.ui.screen.dashboard.DashboardScreen
 import pro.fateev.diary.ui.screen.dashboard.DashboardViewModel
-import pro.fateev.diary.ui.screen.diary.DiaryScreen
-import pro.fateev.diary.ui.screen.diary.DiaryScreenViewModel
-import pro.fateev.diary.ui.screen.diary.entry.DiaryEntryScreen
-import pro.fateev.diary.ui.screen.diary.entry.DiaryEntryViewModel
+import pro.fateev.diary.feature.diary.ui.DiaryScreen
+import pro.fateev.diary.feature.diary.ui.DiaryScreenViewModel
+import pro.fateev.diary.feature.diary.ui.entry.DiaryEntryScreen
+import pro.fateev.diary.feature.diary.ui.entry.DiaryEntryViewModel
 import pro.fateev.diary.ui.theme.AppTheme
 
 @AndroidEntryPoint

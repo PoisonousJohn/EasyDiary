@@ -14,13 +14,18 @@
  * limitations under the License.
  */
 
-package pro.fateev.diary.ui.screen.diary.entry
+package pro.fateev.diary.feature.diary.ui.entry
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Scaffold
+import androidx.compose.material.Text
+import androidx.compose.material.TextButton
 import androidx.compose.material.TextField
+import androidx.compose.material.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
@@ -29,15 +34,29 @@ import pro.fateev.diary.ui.theme.AppTheme
 
 @Composable
 fun DiaryEntryScreen(vm: DiaryEntryViewModel) {
-    Column(modifier = Modifier
-        .fillMaxHeight()
-        .fillMaxWidth()) {
-        val text = vm.text.collectAsState().value
-        TextField(value = text, onValueChange = { it: String ->
-            vm.onTextChanged(it)
-        }, textStyle = MaterialTheme.typography.body1, modifier = Modifier
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title =  { Text("asdf") },
+                actions = {
+                    TextButton(onClick = vm::onSave) {
+                        Text("Save")
+                    }
+                }
+            )
+        }
+    ) {
+        Column(modifier = Modifier
+            .padding(it)
             .fillMaxHeight()
-            .fillMaxWidth())
+            .fillMaxWidth()) {
+            val text = vm.text.collectAsState().value
+            TextField(value = text, onValueChange = { it: String ->
+                vm.onTextChanged(it)
+            }, textStyle = MaterialTheme.typography.body1, modifier = Modifier
+                .fillMaxHeight()
+                .fillMaxWidth())
+        }
     }
 }
 

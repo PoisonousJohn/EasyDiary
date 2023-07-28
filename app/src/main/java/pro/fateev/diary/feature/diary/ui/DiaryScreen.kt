@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package pro.fateev.diary.ui.screen.diary
+package pro.fateev.diary.feature.diary.ui
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -40,9 +40,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import pro.fateev.diary.feature.diary.domain.model.DiaryEntry
 import pro.fateev.diary.ui.theme.body2Secondary
-
-data class DiaryEntry(val text: String)
 
 @Composable
 fun DiaryEntryCard(entry: DiaryEntry) = Card(

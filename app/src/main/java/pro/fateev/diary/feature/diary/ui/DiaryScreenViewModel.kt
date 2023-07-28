@@ -14,25 +14,43 @@
  * limitations under the License.
  */
 
-package pro.fateev.diary.ui.screen.diary.entry
+package pro.fateev.diary.feature.diary.ui
 
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
+import pro.fateev.diary.feature.diary.domain.DiaryRepository
+import pro.fateev.diary.feature.diary.domain.model.Diary
+import pro.fateev.diary.feature.diary.domain.model.DiaryEntry
 import pro.fateev.diary.navigation.routing.generatePath
 import pro.fateev.diary.ui.screen.Routes
 import pro.fateev.diary.ui.screen.common.BaseViewModel
 import javax.inject.Inject
 
 @HiltViewModel
-class DiaryEntryViewModel @Inject constructor() : BaseViewModel() {
-    val entryId = MutableStateFlow<Int?>(null)
-    private val _text = MutableStateFlow<String>("")
-    val text: StateFlow<String> = _text
+class DiaryScreenViewModel @Inject constructor(private val repo: DiaryRepository) : BaseViewModel()  {
+    private val _entries = MutableStateFlow(emptyList<DiaryEntry>())
 
-    fun onTextChanged(text: String) {
-        _text.value = text
+    val entries: StateFlow<List<DiaryEntry>>
+        get() = _entries
+
+    init {
+        viewModelScope.launch {
+            repo.getDiary().collect {
+                _entries.emit(it.entries)
+            }
+        }
+    }
+
+    fun onAddEntry() {
+        viewModelScope.launch {
+            navigateTo(Routes.DiaryEntry.generatePath())
+        }
     }
 }

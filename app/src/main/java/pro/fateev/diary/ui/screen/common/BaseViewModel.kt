@@ -29,6 +29,10 @@ abstract class BaseViewModel : ViewModel() {
         this.navigationController = navigationController
     }
 
+    fun pop() {
+        navigationController?.getNavController()?.popBackStack()
+    }
+
     /**
      * Navigate to the [destinationRoute]
      * @param destinationRoute destination
