@@ -16,4 +16,4 @@
 
 package pro.fateev.diary.feature.diary.domain.model
 
-data class DiaryEntry(val text: String)
+data class DiaryEntry(val id: Int = 0, val text: String = "")

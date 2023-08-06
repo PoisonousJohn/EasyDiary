@@ -119,19 +119,7 @@ fun DiaryScreenContent(entries: List<DiaryEntry>, onAddEntry: () -> Unit) {
 fun MainScreenPreview() {
     DiaryScreenContent(
         listOf(
-            DiaryEntry("Test asd;lfkj as;dlkfj a;sldkjf a;lskdfj"),
-            DiaryEntry("Test asdf;lkja sdf;lkj"),
-            DiaryEntry("Test asdf;lkja sdf;lkj dsf;lkajsd f;laksj df;lkjas d;fklaj sd"),
-            DiaryEntry("Test asdf;lkja sdf;lkj dsf;lkajsd f;laksj df;lkjas d;fklaj sd"),
-            DiaryEntry("Test asdf;lkja sdf;lkj dsf;lkajsd f;laksj df;lkjas d;fklaj sd"),
-            DiaryEntry("Test asdf;lkja sdf;lkj dsf;lkajsd f;laksj df;lkjas d;fklaj sd"),
-            DiaryEntry("Test asdf;lkja sdf;lkj dsf;lkajsd f;laksj df;lkjas d;fklaj sd"),
-            DiaryEntry("Test asdf;lkja sdf;lkj dsf;lkajsd f;laksj df;lkjas d;fklaj sd"),
-            DiaryEntry("Test asdf;lkja sdf;lkj dsf;lkajsd f;laksj df;lkjas d;fklaj sd"),
-            DiaryEntry("Test asdf;lkja sdf;lkj dsf;lkajsd f;laksj df;lkjas d;fklaj sd"),
-            DiaryEntry("Test asdf;lkja sdf;lkj dsf;lkajsd f;laksj df;lkjas d;fklaj sd"),
-            DiaryEntry("Test asdf;lkja sdf;lkj dsf;lkajsd f;laksj df;lkjas d;fklaj sd"),
-            DiaryEntry("Test asdf;lkja sdf;lkj dsf;lkajsd f;laksj df;lkjas d;fklaj sd"),
+            DiaryEntry(1, "Test asd;lfkj as;dlkfj a;sldkjf a;lskdfj"),
         ), {}
     )
 }

@@ -18,7 +18,9 @@ package pro.fateev.diary.feature.diary.domain
 
 import kotlinx.coroutines.flow.Flow
 import pro.fateev.diary.feature.diary.domain.model.Diary
+import pro.fateev.diary.feature.diary.domain.model.DiaryEntry
 
 interface DiaryRepository {
-    suspend fun getDiary(): Flow<Diary>
+    fun getDiary(): Flow<Diary>
+    suspend fun addDiaryEntry(entry: DiaryEntry)
 }

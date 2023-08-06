@@ -29,33 +29,44 @@ import androidx.compose.material.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import pro.fateev.diary.ui.theme.AppTheme
 
 @Composable
 fun DiaryEntryScreen(vm: DiaryEntryViewModel) {
+    val text = vm.data.collectAsState().value.text
+    DiaryEntryScreenContent(text = text, onTextChanged = vm::onTextChanged, onSave = vm::onSave)
+}
+
+@Composable
+fun DiaryEntryScreenContent(text: String, onTextChanged: (String) -> Unit, onSave: () -> Unit) {
     Scaffold(
         topBar = {
             TopAppBar(
-                title =  { Text("asdf") },
+                title = { Text(if (text.isBlank()) "New entry" else "Edit entry") },
                 actions = {
-                    TextButton(onClick = vm::onSave) {
-                        Text("Save")
+                    TextButton(onClick = onSave) {
+                        Text("Save", color = Color.White)
                     }
                 }
             )
         }
     ) {
-        Column(modifier = Modifier
-            .padding(it)
-            .fillMaxHeight()
-            .fillMaxWidth()) {
-            val text = vm.text.collectAsState().value
-            TextField(value = text, onValueChange = { it: String ->
-                vm.onTextChanged(it)
-            }, textStyle = MaterialTheme.typography.body1, modifier = Modifier
+        Column(
+            modifier = Modifier
+                .padding(it)
                 .fillMaxHeight()
-                .fillMaxWidth())
+                .fillMaxWidth()
+        ) {
+            TextField(
+                value = text,
+                onValueChange = onTextChanged,
+                textStyle = MaterialTheme.typography.body1,
+                modifier = Modifier
+                    .fillMaxHeight()
+                    .fillMaxWidth()
+            )
         }
     }
 }
@@ -64,6 +75,6 @@ fun DiaryEntryScreen(vm: DiaryEntryViewModel) {
 @Preview
 fun DiaryEntryScreenPreview() {
     AppTheme(darkTheme = true) {
-        DiaryEntryScreen(vm = DiaryEntryViewModel())
+        DiaryEntryScreenContent(text = "test", {}) {}
     }
 }

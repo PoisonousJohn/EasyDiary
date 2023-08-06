@@ -25,19 +25,32 @@ import pro.fateev.diary.feature.diary.domain.model.Diary
 import pro.fateev.diary.feature.diary.domain.model.DiaryEntry
 import javax.inject.Inject
 
-class DiaryRepositoryImpl @Inject constructor(scope: CoroutineScope) : DiaryRepository {
-    private val entries = MutableSharedFlow<Diary>(1).apply {
-        val diary = Diary(
-            entries = listOf(
-                DiaryEntry("Test 1"),
-                DiaryEntry("Test 2"),
-                DiaryEntry("Test 3"),
-            )
+class DiaryRepositoryImpl @Inject constructor(private val scope: CoroutineScope) : DiaryRepository {
+    private var diary = Diary(
+        entries = listOf(
+            DiaryEntry(1, "Test 1"),
+            DiaryEntry(2, "Test 2"),
+            DiaryEntry(3, "Test 3"),
         )
+    )
+
+    private val entries = MutableSharedFlow<Diary>(1)
+
+    init {
         scope.launch {
-            emit(diary)
+            entries.emit(diary)
         }
     }
 
-    override suspend fun getDiary(): Flow<Diary> = entries
+    override fun getDiary(): Flow<Diary> = entries
+    override suspend fun addDiaryEntry(entry: DiaryEntry) {
+        diary = diary.copy(entries = diary.entries.toMutableList().apply {
+            add(entry.copy(id = (diary.entries.lastOrNull()?.id ?: 0) + 1))
+        })
+        notifyUpdated()
+    }
+
+    private fun notifyUpdated() = scope.launch {
+        entries.emit(diary)
+    }
 }

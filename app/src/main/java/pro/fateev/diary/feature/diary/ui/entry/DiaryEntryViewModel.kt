@@ -16,26 +16,44 @@
 
 package pro.fateev.diary.feature.diary.ui.entry
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
+import pro.fateev.diary.extensions.mutableStateIn
+import pro.fateev.diary.feature.diary.domain.DiaryRepository
+import pro.fateev.diary.feature.diary.domain.model.DiaryEntry
 import pro.fateev.diary.ui.screen.common.BaseViewModel
 import javax.inject.Inject
 
 @HiltViewModel
-class DiaryEntryViewModel @Inject constructor() : BaseViewModel() {
-    val entryId = MutableStateFlow<Int?>(null)
-    private val _text = MutableStateFlow<String>("")
-    val text: StateFlow<String> = _text
+class DiaryEntryViewModel @Inject constructor(
+    private val repo: DiaryRepository,
+    savedState: SavedStateHandle
+) : BaseViewModel() {
+
+    private val _entryId = savedState.get<Int>("id")
+    private val _diaryEntry: MutableStateFlow<DiaryEntry> = repo.getDiary().map {
+        it.entries.firstOrNull { entry ->
+            entry.id == _entryId
+        } ?: DiaryEntry()
+    }.mutableStateIn(viewModelScope, DiaryEntry())
+
+    val data: StateFlow<DiaryEntry>
+        get() = _diaryEntry
 
     fun onTextChanged(text: String) {
-        _text.value = text
+        _diaryEntry.value = _diaryEntry.value.copy(text = text)
     }
 
     fun onSave() {
         viewModelScope.launch {
+            if (_diaryEntry.value.id == 0) {
+                repo.addDiaryEntry(_diaryEntry.value)
+            }
             pop()
         }
     }
