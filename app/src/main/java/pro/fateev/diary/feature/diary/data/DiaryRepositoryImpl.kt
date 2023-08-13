@@ -22,6 +22,7 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.launch
 import pro.fateev.diary.feature.diary.data.DiaryEntryMapper.toDomainModel
 import pro.fateev.diary.feature.diary.data.DiaryEntryMapper.toEntity
+import pro.fateev.diary.feature.diary.data.room.AppDatabase
 import pro.fateev.diary.feature.diary.domain.DiaryRepository
 import pro.fateev.diary.feature.diary.domain.model.Diary
 import pro.fateev.diary.feature.diary.domain.model.DiaryEntry
@@ -55,7 +56,7 @@ class DiaryRepositoryImpl @Inject constructor(
     override suspend fun addDiaryEntry(entry: DiaryEntry) {
         val savedEntry = entry
             .copy(id = _dao.insert(entry.toEntity()).first())
-        _entriesBuffer.add(entry)
+        _entriesBuffer.add(savedEntry)
         notifyUpdated()
     }
 

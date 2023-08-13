@@ -14,12 +14,15 @@
  * limitations under the License.
  */
 
-package pro.fateev.diary.feature.diary.domain.model
+package pro.fateev.diary.feature.diary.data.room
 
+import androidx.room.TypeConverter
 import java.util.Date
 
-data class DiaryEntry(
-    val id: Long = -1,
-    val date: Date = Date(System.currentTimeMillis()),
-    val text: String = ""
-)
+class Converters {
+    @TypeConverter
+    fun toDate(dateLong: Long?): Date? = dateLong?.let { Date(it) }
+
+    @TypeConverter
+    fun fromDate(date: Date?): Long? = date?.time
+}

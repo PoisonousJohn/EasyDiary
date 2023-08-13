@@ -35,10 +35,10 @@ class DiaryEntryViewModel @Inject constructor(
     savedState: SavedStateHandle
 ) : BaseViewModel() {
 
-    private val _entryId = savedState.get<Int>("id")
+    private val _entryId = savedState.get<Long>("id")
     private val _diaryEntry: MutableStateFlow<DiaryEntry> = repo.getDiary().map {
         it.entries.firstOrNull { entry ->
-            entry.id == _entryId
+            entry.id == (_entryId ?: -1L)
         } ?: DiaryEntry()
     }.mutableStateIn(viewModelScope, DiaryEntry())
 
@@ -51,7 +51,7 @@ class DiaryEntryViewModel @Inject constructor(
 
     fun onSave() {
         viewModelScope.launch {
-            if (_diaryEntry.value.id == 0) {
+            if (_diaryEntry.value.id == -1L) {
                 repo.addDiaryEntry(_diaryEntry.value)
             }
             pop()

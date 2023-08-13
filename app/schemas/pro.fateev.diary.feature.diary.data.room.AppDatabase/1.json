@@ -2,11 +2,11 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "55f14ca014ecfc5d1dc998ec954c392d",
+    "identityHash": "b3e7428772585cd2c91672bd55c43265",
     "entities": [
       {
         "tableName": "diary_entry",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `text` TEXT, `entry_date` TEXT NOT NULL)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `text` TEXT, `entry_date` INTEGER NOT NULL)",
         "fields": [
           {
             "fieldPath": "id",
@@ -23,7 +23,7 @@
           {
             "fieldPath": "date",
             "columnName": "entry_date",
-            "affinity": "TEXT",
+            "affinity": "INTEGER",
             "notNull": true
           }
         ],
@@ -40,7 +40,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '55f14ca014ecfc5d1dc998ec954c392d')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'b3e7428772585cd2c91672bd55c43265')"
     ]
   }
 }

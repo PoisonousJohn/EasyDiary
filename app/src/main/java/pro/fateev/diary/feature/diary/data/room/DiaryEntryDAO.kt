@@ -14,12 +14,22 @@
  * limitations under the License.
  */
 
-package pro.fateev.diary.feature.diary.data
+package pro.fateev.diary.feature.diary.data.room
 
-import androidx.room.Database
-import androidx.room.RoomDatabase
+import androidx.room.Dao
+import androidx.room.Insert
+import androidx.room.Query
 
-@Database(entities = [DiaryEntryEntity::class], version = 1)
-abstract class AppDatabase : RoomDatabase() {
-    abstract val diaryEntryDAO: DiaryEntryDAO
+@Dao
+interface DiaryEntryDAO {
+
+    @Query("SELECT * FROM diary_entry")
+    suspend fun getAll(): Array<DiaryEntryEntity>
+
+    @Insert
+    suspend fun insert(vararg entry: DiaryEntryEntity): List<Long>
+
+    @Query("DELETE FROM diary_entry WHERE id = :id")
+    suspend fun delete(id: Int): Int
+
 }

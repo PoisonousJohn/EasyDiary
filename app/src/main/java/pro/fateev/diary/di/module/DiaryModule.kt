@@ -25,7 +25,7 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import pro.fateev.diary.feature.diary.data.DiaryRepositoryImpl
-import pro.fateev.diary.feature.diary.data.AppDatabase
+import pro.fateev.diary.feature.diary.data.room.AppDatabase
 import pro.fateev.diary.feature.diary.domain.DiaryRepository
 import javax.inject.Singleton
 

@@ -42,6 +42,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import pro.fateev.diary.feature.diary.domain.model.DiaryEntry
 import pro.fateev.diary.ui.theme.body2Secondary
+import java.util.Date
 
 @Composable
 fun DiaryEntryCard(entry: DiaryEntry) = Card(
@@ -119,7 +120,7 @@ fun DiaryScreenContent(entries: List<DiaryEntry>, onAddEntry: () -> Unit) {
 fun MainScreenPreview() {
     DiaryScreenContent(
         listOf(
-            DiaryEntry(1, "Test asd;lfkj as;dlkfj a;sldkjf a;lskdfj"),
-        ), {}
-    )
+            DiaryEntry(id = 1, date = Date(), text = "Test asd;lfkj as;dlkfj a;sldkjf a;lskdfj"),
+        )
+    ) {}
 }

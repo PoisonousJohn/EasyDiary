@@ -16,12 +16,13 @@
 
 package pro.fateev.diary.feature.diary.data
 
+import pro.fateev.diary.feature.diary.data.room.DiaryEntryEntity
 import pro.fateev.diary.feature.diary.domain.model.DiaryEntry
 
 object DiaryEntryMapper {
     fun DiaryEntry.toEntity(): DiaryEntryEntity =
-        DiaryEntryEntity(id = if (id == -1L) null else id, text = text)
+        DiaryEntryEntity(id = if (id == -1L) null else id, text = text, date = date)
 
     fun DiaryEntryEntity.toDomainModel(): DiaryEntry =
-        DiaryEntry(id = id ?: -1, text = text ?: "")
+        DiaryEntry(id = id ?: -1, text = text ?: "", date = date)
 }
