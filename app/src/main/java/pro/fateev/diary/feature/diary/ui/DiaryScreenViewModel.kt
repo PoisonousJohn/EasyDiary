@@ -18,10 +18,14 @@ package pro.fateev.diary.feature.diary.ui
 
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import pro.fateev.diary.feature.diary.domain.DiaryRepository
+import pro.fateev.diary.feature.diary.domain.model.Diary
 import pro.fateev.diary.feature.diary.domain.model.DiaryEntry
 import pro.fateev.diary.navigation.routing.generatePath
 import pro.fateev.diary.ui.screen.Routes
@@ -32,8 +36,8 @@ import javax.inject.Inject
 class DiaryScreenViewModel @Inject constructor(private val repo: DiaryRepository) : BaseViewModel()  {
     private val _entries = MutableStateFlow(emptyList<DiaryEntry>())
 
-    val entries: StateFlow<List<DiaryEntry>>
-        get() = _entries
+    val entries: Flow<List<DiaryEntry>>
+        get() = repo.getDiary().map { it.entries }
 
     init {
         viewModelScope.launch {
@@ -46,6 +50,13 @@ class DiaryScreenViewModel @Inject constructor(private val repo: DiaryRepository
     fun onAddEntry() {
         viewModelScope.launch {
             navigateTo(Routes.DiaryEntry.generatePath("id" to 0))
+        }
+    }
+
+    fun onEditEntry(entry: DiaryEntry)
+    {
+        viewModelScope.launch {
+            navigateTo(Routes.DiaryEntry.generatePath("id" to entry.id))
         }
     }
 }

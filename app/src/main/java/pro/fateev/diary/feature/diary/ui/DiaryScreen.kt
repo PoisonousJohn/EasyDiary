@@ -16,6 +16,7 @@
 
 package pro.fateev.diary.feature.diary.ui
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -33,12 +34,12 @@ import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.rounded.DateRange
+import androidx.compose.material.icons.rounded.ZoomInMap
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import pro.fateev.diary.extensions.FormattingExtensions.formatShort
@@ -63,8 +64,6 @@ fun DiaryEntryCard(entry: DiaryEntry) = Card(
             modifier = Modifier
                 .weight(1f)
                 .padding(end = 8.dp),
-            overflow = TextOverflow.Ellipsis,
-            maxLines = 3
         )
     }
 }
@@ -72,11 +71,15 @@ fun DiaryEntryCard(entry: DiaryEntry) = Card(
 @Composable
 fun DiaryScreen(vm: DiaryScreenViewModel) {
     val entries: List<DiaryEntry> = vm.entries.collectAsState(initial = emptyList()).value
-    DiaryScreenContent(entries, onAddEntry = vm::onAddEntry)
+    DiaryScreenContent(entries, onAddEntry = vm::onAddEntry, onEditEntry = vm::onEditEntry)
 }
 
 @Composable
-fun DiaryScreenContent(entries: List<DiaryEntry>, onAddEntry: () -> Unit) {
+fun DiaryScreenContent(
+    entries: List<DiaryEntry>,
+    onAddEntry: () -> Unit,
+    onEditEntry: (DiaryEntry) -> Unit
+) {
     Scaffold(
         floatingActionButton = {
             FloatingActionButton(
@@ -93,11 +96,13 @@ fun DiaryScreenContent(entries: List<DiaryEntry>, onAddEntry: () -> Unit) {
                 modifier = Modifier.padding(padding), contentPadding = PaddingValues(12.dp)
             ) {
                 items(entries.size) {
-                    Column {
+                    Column(
+                        modifier = Modifier.clickable(onClick = { onEditEntry(entries[it]) })
+                    ) {
                         Row(
                             modifier = Modifier
                                 .align(Alignment.CenterHorizontally)
-                                .padding(top = if (it > 0) 12.dp else 0.dp)
+                                .padding(top = if (it > 0) 16.dp else 0.dp)
                         ) {
                             Icon(
                                 imageVector = Icons.Rounded.DateRange,
@@ -123,6 +128,6 @@ fun DiaryScreenPreview() {
     DiaryScreenContent(
         listOf(
             DiaryEntry(id = 1, date = Date(), text = "Test asd;lfkj as;dlkfj a;sldkjf a;lskdfj"),
-        )
-    ) {}
+        ),
+        onAddEntry = {}, onEditEntry = {})
 }

@@ -58,9 +58,7 @@ class DiaryEntryViewModel @Inject constructor(
 
     fun onSave() {
         viewModelScope.launch {
-            if (_diaryEntry.value.id == -1L) {
-                repo.saveDiaryEntry(_diaryEntry.value)
-            }
+            repo.saveDiaryEntry(_diaryEntry.value)
             pop()
         }
     }
