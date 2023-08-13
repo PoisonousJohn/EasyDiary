@@ -14,21 +14,12 @@
  * limitations under the License.
  */
 
-package pro.fateev.diary.di.module
+package pro.fateev.diary.feature.diary.data
 
-import dagger.Binds
-import dagger.Module
-import dagger.hilt.InstallIn
-import dagger.hilt.components.SingletonComponent
-import pro.fateev.diary.feature.diary.DiaryRepositoryImpl
-import pro.fateev.diary.feature.diary.domain.DiaryRepository
-import javax.inject.Singleton
+import androidx.room.Database
+import androidx.room.RoomDatabase
 
-@InstallIn(SingletonComponent::class)
-@Module
-abstract class DiaryModule {
-
-    @Singleton
-    @Binds
-    abstract fun provideDiaryRepo(repo: DiaryRepositoryImpl): DiaryRepository
+@Database(entities = [DiaryEntryEntity::class], version = 1)
+abstract class AppDatabase : RoomDatabase() {
+    abstract val diaryEntryDAO: DiaryEntryDAO
 }

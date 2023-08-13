@@ -14,43 +14,52 @@
  * limitations under the License.
  */
 
-package pro.fateev.diary.feature.diary
+package pro.fateev.diary.feature.diary.data
 
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.launch
+import pro.fateev.diary.feature.diary.data.DiaryEntryMapper.toDomainModel
+import pro.fateev.diary.feature.diary.data.DiaryEntryMapper.toEntity
 import pro.fateev.diary.feature.diary.domain.DiaryRepository
 import pro.fateev.diary.feature.diary.domain.model.Diary
 import pro.fateev.diary.feature.diary.domain.model.DiaryEntry
 import javax.inject.Inject
 
-class DiaryRepositoryImpl @Inject constructor(private val scope: CoroutineScope) : DiaryRepository {
-    private var diary = Diary(
-        entries = listOf(
-            DiaryEntry(1, "Test 1"),
-            DiaryEntry(2, "Test 2"),
-            DiaryEntry(3, "Test 3"),
-        )
+class DiaryRepositoryImpl @Inject constructor(
+        private val scope: CoroutineScope,
+        appDatabase: AppDatabase
+    ) : DiaryRepository {
+
+    private val _entriesBuffer:  MutableList<DiaryEntry> = mutableListOf()
+    private val _dao = appDatabase.diaryEntryDAO
+
+    private var _diary = Diary(
+        entries = _entriesBuffer
     )
 
     private val entries = MutableSharedFlow<Diary>(1)
 
     init {
         scope.launch {
-            entries.emit(diary)
+            entries.emit(_diary)
+            val result = _dao.getAll()
+            result.map { it.toDomainModel() }.let(_entriesBuffer::addAll)
+            notifyUpdated()
         }
     }
 
     override fun getDiary(): Flow<Diary> = entries
+
     override suspend fun addDiaryEntry(entry: DiaryEntry) {
-        diary = diary.copy(entries = diary.entries.toMutableList().apply {
-            add(entry.copy(id = (diary.entries.lastOrNull()?.id ?: 0) + 1))
-        })
+        val savedEntry = entry
+            .copy(id = _dao.insert(entry.toEntity()).first())
+        _entriesBuffer.add(entry)
         notifyUpdated()
     }
 
     private fun notifyUpdated() = scope.launch {
-        entries.emit(diary)
+        entries.emit(_diary)
     }
 }

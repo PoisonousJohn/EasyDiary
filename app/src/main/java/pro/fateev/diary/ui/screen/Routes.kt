@@ -27,7 +27,7 @@ object Routes {
 
     object DiaryEntry : ScreenRoute(
         routeDefinition = Definition("diary-entry", argumentKeys = listOf(
-            "id" to { type = NavType.IntType; optional = false }
+            "id" to { type = NavType.LongType; optional = false }
         ))
     )
 

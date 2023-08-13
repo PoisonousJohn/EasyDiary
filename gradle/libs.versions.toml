@@ -1,6 +1,6 @@
 [versions]
 bomCompose = "2023.06.01"
-compose = "1.4.3"
+compose = "1.4.8"
 composeNavigation = "2.6.0"
 composeNavigationHilt = "1.0.0"
 composeTest = "1.4.3"
@@ -8,6 +8,7 @@ activity = "1.10.1"
 kotlin = "1.8.22"
 hilt = "2.47"
 androidGradlePlugin = "8.0.2"
+room = "2.5.1"
 
 [libraries]
 bom-compose = { group = "androidx.compose", name = "compose-bom", version.ref = "bomCompose" }
@@ -32,6 +33,12 @@ hilt-android = { module = "com.google.dagger:hilt-android", version.ref = "hilt"
 hilt-core = { module = "com.google.dagger:hilt-core", version.ref = "hilt" }
 hilt-compiler = { module = "com.google.dagger:hilt-compiler", version.ref = "hilt" }
 hilt-androidCompiler = { module = "com.google.dagger:hilt-android-compiler", version.ref = "hilt" }
+
+room-runtime = { module = "androidx.room:room-runtime", version.ref = "room" }
+room-coroutines = { module = "androidx.room:room-coroutines", version.ref = "room" }
+room-compiler = { module = "androidx.room:room-compiler", version.ref = "room" }
+room-ktx = { module = "androidx.room:room-ktx", version.ref = "room" }
+room-paging = { module = "androidx.room:room-paging", version.ref = "room" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "androidGradlePlugin" }

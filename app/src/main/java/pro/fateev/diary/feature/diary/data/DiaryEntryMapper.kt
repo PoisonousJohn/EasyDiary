@@ -14,6 +14,14 @@
  * limitations under the License.
  */
 
-package pro.fateev.diary.feature.diary.domain.model
+package pro.fateev.diary.feature.diary.data
 
-data class DiaryEntry(val id: Long = -1, val text: String = "")
+import pro.fateev.diary.feature.diary.domain.model.DiaryEntry
+
+object DiaryEntryMapper {
+    fun DiaryEntry.toEntity(): DiaryEntryEntity =
+        DiaryEntryEntity(id = if (id == -1L) null else id, text = text)
+
+    fun DiaryEntryEntity.toDomainModel(): DiaryEntry =
+        DiaryEntry(id = id ?: -1, text = text ?: "")
+}

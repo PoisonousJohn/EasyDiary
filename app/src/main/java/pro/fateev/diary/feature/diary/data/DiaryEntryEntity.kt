@@ -14,6 +14,14 @@
  * limitations under the License.
  */
 
-package pro.fateev.diary.feature.diary.domain.model
+package pro.fateev.diary.feature.diary.data
 
-data class DiaryEntry(val id: Long = -1, val text: String = "")
+import androidx.room.ColumnInfo
+import androidx.room.Entity
+import androidx.room.PrimaryKey
+
+@Entity(tableName = "diary_entry")
+data class DiaryEntryEntity(
+    @PrimaryKey(autoGenerate = true) val id: Long?,
+    @ColumnInfo(name = "text") val text: String?,
+)
