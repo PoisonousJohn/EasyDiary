@@ -23,7 +23,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
-import pro.fateev.diary.extensions.mutableStateIn
+import pro.fateev.diary.extensions.FlowExtensions.mutableStateIn
 import pro.fateev.diary.feature.diary.domain.DiaryRepository
 import pro.fateev.diary.feature.diary.domain.model.DiaryEntry
 import pro.fateev.diary.ui.screen.common.BaseViewModel
