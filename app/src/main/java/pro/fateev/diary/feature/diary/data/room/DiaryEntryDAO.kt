@@ -24,7 +24,7 @@ import androidx.room.Update
 @Dao
 interface DiaryEntryDAO {
 
-    @Query("SELECT * FROM diary_entry")
+    @Query("SELECT * FROM diary_entry ORDER BY entry_date DESC")
     suspend fun getAll(): Array<DiaryEntryEntity>
 
     @Insert
