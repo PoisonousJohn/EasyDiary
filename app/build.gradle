@@ -23,10 +23,10 @@ plugins {
 
 android {
     compileSdk = 33
-    namespace = "dev.marcocattaneo.androidcomposetemplate"
+    namespace = "pro.fateev"
 
     defaultConfig {
-        applicationId = "dev.marcocattaneo.androidcomposetemplate"
+        applicationId = "pro.fateev.diary"
         minSdk = 21
         targetSdk = 33
         versionCode = 1
@@ -87,6 +87,7 @@ dependencies {
 
     implementation libs.compose.ui
     implementation libs.compose.material
+    implementation libs.compose.material.icons.extended
     implementation libs.compose.preview
     implementation libs.compose.navigation.core
     implementation libs.compose.navigation.hilt

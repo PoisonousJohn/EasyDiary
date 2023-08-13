@@ -22,5 +22,5 @@ import pro.fateev.diary.feature.diary.domain.model.DiaryEntry
 
 interface DiaryRepository {
     fun getDiary(): Flow<Diary>
-    suspend fun addDiaryEntry(entry: DiaryEntry)
+    suspend fun saveDiaryEntry(entry: DiaryEntry)
 }

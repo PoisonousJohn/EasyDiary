@@ -53,10 +53,17 @@ class DiaryRepositoryImpl @Inject constructor(
 
     override fun getDiary(): Flow<Diary> = entries
 
-    override suspend fun addDiaryEntry(entry: DiaryEntry) {
-        val savedEntry = entry
-            .copy(id = _dao.insert(entry.toEntity()).first())
-        _entriesBuffer.add(savedEntry)
+    override suspend fun saveDiaryEntry(entry: DiaryEntry) {
+        if (entry.id < 0)
+        {
+            val savedEntry = entry
+                .copy(id = _dao.insert(entry.toEntity()).first())
+            _entriesBuffer.add(savedEntry)
+        }
+        else
+        {
+            _dao.update(entry.toEntity())
+        }
         notifyUpdated()
     }
 

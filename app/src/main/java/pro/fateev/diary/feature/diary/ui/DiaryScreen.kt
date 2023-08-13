@@ -37,9 +37,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import pro.fateev.diary.extensions.FormattingExtensions.formatShort
 import pro.fateev.diary.feature.diary.domain.model.DiaryEntry
 import pro.fateev.diary.ui.theme.body2Secondary
 import java.util.Date
@@ -103,7 +105,7 @@ fun DiaryScreenContent(entries: List<DiaryEntry>, onAddEntry: () -> Unit) {
                                 tint = MaterialTheme.typography.body2Secondary.color
                             )
                             Text(
-                                "23.12",
+                                entries[it].date.formatShort(LocalContext.current),
                                 style = MaterialTheme.typography.body2Secondary,
                                 modifier = Modifier.align(Alignment.CenterVertically)
                             )
@@ -117,7 +119,7 @@ fun DiaryScreenContent(entries: List<DiaryEntry>, onAddEntry: () -> Unit) {
 
 @Composable
 @Preview
-fun MainScreenPreview() {
+fun DiaryScreenPreview() {
     DiaryScreenContent(
         listOf(
             DiaryEntry(id = 1, date = Date(), text = "Test asd;lfkj as;dlkfj a;sldkjf a;lskdfj"),

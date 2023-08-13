@@ -14,26 +14,16 @@
  * limitations under the License.
  */
 
-package pro.fateev.diary.feature.diary.data.room
+package pro.fateev.diary.extensions
 
-import androidx.room.Dao
-import androidx.room.Insert
-import androidx.room.Query
-import androidx.room.Update
+import android.content.Context
+import android.text.format.DateFormat
+import java.util.Date
 
-@Dao
-interface DiaryEntryDAO {
+object FormattingExtensions {
 
-    @Query("SELECT * FROM diary_entry")
-    suspend fun getAll(): Array<DiaryEntryEntity>
-
-    @Insert
-    suspend fun insert(vararg entry: DiaryEntryEntity): List<Long>
-
-    @Query("DELETE FROM diary_entry WHERE id = :id")
-    suspend fun delete(id: Int): Int
-
-    @Update
-    suspend fun update(entry: DiaryEntryEntity): Int
-
+    fun Date.formatShort(context: Context): String {
+        val dateFormat = DateFormat.getDateFormat(context)
+        return dateFormat.format(this)
+    }
 }

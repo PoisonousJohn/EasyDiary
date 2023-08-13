@@ -16,41 +16,96 @@
 
 package pro.fateev.diary.feature.diary.ui.entry
 
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.material.TextButton
 import androidx.compose.material.TextField
 import androidx.compose.material.TopAppBar
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.ArrowDropDown
+import androidx.compose.material.icons.outlined.CalendarMonth
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import pro.fateev.diary.extensions.DateExtensions.showDatePicker
+import pro.fateev.diary.extensions.FormattingExtensions.formatShort
 import pro.fateev.diary.ui.theme.AppTheme
+import java.util.Date
 
 @Composable
 fun DiaryEntryScreen(vm: DiaryEntryViewModel) {
-    val text = vm.data.collectAsState().value.text
-    DiaryEntryScreenContent(text = text, onTextChanged = vm::onTextChanged, onSave = vm::onSave)
+    val state = vm.data.collectAsState().value
+    DiaryEntryScreenContent(
+        text = state.text,
+        onTextChanged = vm::onTextChanged,
+        onSave = vm::onSave,
+        date = state.date,
+        onChangeDate = vm::onChangeDate
+    )
 }
 
 @Composable
-fun DiaryEntryScreenContent(text: String, onTextChanged: (String) -> Unit, onSave: () -> Unit) {
+fun DiaryEntryScreenContent(
+    date: Date,
+    text: String,
+    onTextChanged: (String) -> Unit,
+    onSave: () -> Unit,
+    onChangeDate: (Date) -> Unit
+) {
+    val context = LocalContext.current
     Scaffold(
         topBar = {
-            TopAppBar(
-                title = { Text(if (text.isBlank()) "New entry" else "Edit entry") },
-                actions = {
-                    TextButton(onClick = onSave) {
-                        Text("Save", color = Color.White)
+            TopAppBar {
+                Box(
+                    contentAlignment = Alignment.Center,
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .clickable(onClick = {
+                            date.showDatePicker(context, onChangeDate)
+                        })
+                ) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Icon(
+                            modifier = Modifier.padding(end = 4.dp),
+                            imageVector = Icons.Outlined.CalendarMonth,
+                            contentDescription = "icon"
+                        )
+                        Text(text = date.formatShort(LocalContext.current))
+                        Icon(
+                            imageVector = Icons.Outlined.ArrowDropDown,
+                            contentDescription = "icon"
+                        )
+                    }
+                    Row(
+                        Modifier
+                            .fillMaxHeight()
+                            .fillMaxWidth(),
+                        horizontalArrangement = Arrangement.End,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+
+                        TextButton(onClick = onSave) {
+                            Text("Save", color = Color.White)
+                        }
                     }
                 }
-            )
+            }
         }
     ) {
         Column(
@@ -73,8 +128,26 @@ fun DiaryEntryScreenContent(text: String, onTextChanged: (String) -> Unit, onSav
 
 @Composable
 @Preview
-fun DiaryEntryScreenPreview() {
+fun DiaryEntryScreenPreviewLight() {
+    AppTheme(darkTheme = false) {
+        DiaryEntryScreenContent(
+            text = "test",
+            date = Date(),
+            onSave = {},
+            onTextChanged = {},
+            onChangeDate = {})
+    }
+}
+
+@Composable
+@Preview
+fun DiaryEntryScreenPreviewDark() {
     AppTheme(darkTheme = true) {
-        DiaryEntryScreenContent(text = "test", {}) {}
+        DiaryEntryScreenContent(
+            text = "test",
+            date = Date(),
+            onSave = {},
+            onTextChanged = {},
+            onChangeDate = {})
     }
 }

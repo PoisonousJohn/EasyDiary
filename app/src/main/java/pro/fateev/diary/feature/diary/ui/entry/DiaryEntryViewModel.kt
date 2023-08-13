@@ -27,6 +27,7 @@ import pro.fateev.diary.extensions.FlowExtensions.mutableStateIn
 import pro.fateev.diary.feature.diary.domain.DiaryRepository
 import pro.fateev.diary.feature.diary.domain.model.DiaryEntry
 import pro.fateev.diary.ui.screen.common.BaseViewModel
+import java.util.Date
 import javax.inject.Inject
 
 @HiltViewModel
@@ -45,6 +46,12 @@ class DiaryEntryViewModel @Inject constructor(
     val data: StateFlow<DiaryEntry>
         get() = _diaryEntry
 
+    fun onChangeDate(date: Date) {
+        viewModelScope.launch {
+            _diaryEntry.emit(_diaryEntry.value.copy(date = date))
+        }
+    }
+
     fun onTextChanged(text: String) {
         _diaryEntry.value = _diaryEntry.value.copy(text = text)
     }
@@ -52,7 +59,7 @@ class DiaryEntryViewModel @Inject constructor(
     fun onSave() {
         viewModelScope.launch {
             if (_diaryEntry.value.id == -1L) {
-                repo.addDiaryEntry(_diaryEntry.value)
+                repo.saveDiaryEntry(_diaryEntry.value)
             }
             pop()
         }
