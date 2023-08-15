@@ -23,6 +23,8 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
 import pro.fateev.diary.feature.diary.data.DiaryEntryMapper.toDomainModel
 import pro.fateev.diary.feature.diary.data.DiaryEntryMapper.toEntity
+import pro.fateev.diary.feature.diary.data.MediaMapper.toDomainModel
+import pro.fateev.diary.feature.diary.data.MediaMapper.toEntity
 import pro.fateev.diary.feature.diary.data.room.AppDatabase
 import pro.fateev.diary.feature.diary.domain.DiaryRepository
 import pro.fateev.diary.feature.diary.domain.model.Diary
@@ -35,7 +37,8 @@ class DiaryRepositoryImpl @Inject constructor(
 ) : DiaryRepository {
 
     private val _diaryFlow = MutableSharedFlow<Diary>(replay = 1)
-    private val _dao = appDatabase.diaryEntryDAO
+    private val _diaryDAO = appDatabase.diaryEntryDAO
+    private val _mediaDAO = appDatabase.mediaDAO
 
     init {
         notifyUpdated()
@@ -45,23 +48,33 @@ class DiaryRepositoryImpl @Inject constructor(
 
     override fun getDiaryEntry(id: Long): Flow<DiaryEntry> =
         flow {
-            _dao.getById(id)
+            val media = _mediaDAO.getByDiaryEntryId(id)
+            _diaryDAO.getById(id)
                 .toDomainModel()
+                .copy(media =  media.map { it.toDomainModel() })
                 .let { emit(it) }
         }
 
     override suspend fun saveDiaryEntry(entry: DiaryEntry) {
+        entry.media.map { media ->
+            if (media.id < 0) _mediaDAO.insert(media.toEntity(entry.id))
+        }
         if (entry.id < 0) {
-            _dao.insert(entry.toEntity()).first()
+            _diaryDAO.insert(entry.toEntity()).first()
         } else {
-            _dao.update(entry.toEntity())
+            _diaryDAO.update(entry.toEntity())
         }
         notifyUpdated()
     }
 
+    override suspend fun removeMedia(diaryEntryId: Long, index: Int) {
+        val media = _mediaDAO.getByDiaryEntryId(diaryEntryId)[index]
+        _mediaDAO.delete(media)
+    }
+
     private fun notifyUpdated() = scope.launch {
         scope.launch {
-            val result = _dao.getAll()
+            val result = _diaryDAO.getAll()
                 .map { it.toDomainModel() }
                 .let(::Diary)
                 .let(_diaryFlow::tryEmit)

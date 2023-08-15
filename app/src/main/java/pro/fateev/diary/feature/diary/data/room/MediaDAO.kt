@@ -17,10 +17,17 @@
 package pro.fateev.diary.feature.diary.data.room
 
 import androidx.room.Dao
+import androidx.room.Delete
+import androidx.room.Insert
 import androidx.room.Query
 
 @Dao
 interface MediaDAO {
     @Query("SELECT * FROM media WHERE diary_entry_id = :diaryEntryId")
-    suspend fun getByUser(diaryEntryId: Long): Array<MediaEntity>
+    suspend fun getByDiaryEntryId(diaryEntryId: Long): Array<MediaEntity>
+    @Insert
+    suspend fun insert(media: MediaEntity): Long
+
+    @Delete
+    suspend fun delete(media: MediaEntity): Int
 }

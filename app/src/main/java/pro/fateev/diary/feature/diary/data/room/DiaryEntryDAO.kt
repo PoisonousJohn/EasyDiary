@@ -25,7 +25,7 @@ import androidx.room.Update
 interface DiaryEntryDAO {
 
     @Query("SELECT * FROM diary_entry ORDER BY entry_date DESC")
-    suspend fun getAll(): Array<DiaryEntryEntity>
+    suspend fun getAll(): Array<DiaryEntryMedia>
 
     @Query("SELECT * FROM diary_entry WHERE id = :id LIMIT 1")
     suspend fun getById(id: Long): DiaryEntryEntity

@@ -34,4 +34,5 @@ import androidx.room.TypeConverters
 @TypeConverters(Converters::class)
 abstract class AppDatabase : RoomDatabase() {
     abstract val diaryEntryDAO: DiaryEntryDAO
+    abstract val mediaDAO: MediaDAO
 }

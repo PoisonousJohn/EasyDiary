@@ -16,13 +16,18 @@
 
 package pro.fateev.diary.feature.diary.ui
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.requiredWidth
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
 import androidx.compose.material.FabPosition
@@ -34,16 +39,20 @@ import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.rounded.DateRange
-import androidx.compose.material.icons.rounded.ZoomInMap
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import pro.fateev.diary.extensions.FormattingExtensions.formatShort
 import pro.fateev.diary.feature.diary.domain.model.DiaryEntry
+import pro.fateev.diary.feature.diary.ui.entry.toBitmap
 import pro.fateev.diary.ui.theme.body2Secondary
 import java.util.Date
 
@@ -77,8 +86,8 @@ fun DiaryScreen(vm: DiaryScreenViewModel) {
 @Composable
 fun DiaryScreenContent(
     entries: List<DiaryEntry>,
-    onAddEntry: () -> Unit,
-    onEditEntry: (DiaryEntry) -> Unit
+    onAddEntry: () -> Unit = {},
+    onEditEntry: (DiaryEntry) -> Unit = {}
 ) {
     Scaffold(
         floatingActionButton = {
@@ -99,23 +108,25 @@ fun DiaryScreenContent(
                     Column(
                         modifier = Modifier.clickable(onClick = { onEditEntry(entries[it]) })
                     ) {
-                        Row(
-                            modifier = Modifier
-                                .align(Alignment.CenterHorizontally)
-                                .padding(top = if (it > 0) 16.dp else 0.dp)
-                        ) {
-                            Icon(
-                                imageVector = Icons.Rounded.DateRange,
-                                contentDescription = "Date",
-                                tint = MaterialTheme.typography.body2Secondary.color
-                            )
-                            Text(
-                                entries[it].date.formatShort(LocalContext.current),
-                                style = MaterialTheme.typography.body2Secondary,
-                                modifier = Modifier.align(Alignment.CenterVertically)
-                            )
+                        val spacing = 12.dp
+                        val entry = entries[it]
+                        EntryHeader(index = it, date = entry.date)
+                        if (entry.media.isNotEmpty()) {
+                            LazyRow(
+                                modifier = Modifier.padding(top = spacing),
+                                horizontalArrangement = Arrangement.spacedBy(spacing)) {
+                                items(entry.media.size) {
+                                    val m = entry.media[it]
+                                    val shape = RoundedCornerShape(spacing)
+                                    Image(
+                                        modifier = Modifier.requiredWidth(150.dp).clip(shape).shadow(4.dp, shape).weight(1f),
+                                        painter = m.data.toBitmap().asImageBitmap()
+                                            .let(::BitmapPainter), contentDescription = ""
+                                    )
+                                }
+                            }
                         }
-                        DiaryEntryCard(entries[it])
+                        DiaryEntryCard(entry)
                     }
                 }
             }
@@ -123,11 +134,32 @@ fun DiaryScreenContent(
 }
 
 @Composable
+fun ColumnScope.EntryHeader(index: Int, date: Date) {
+    Row(
+        modifier = Modifier
+            .align(Alignment.CenterHorizontally)
+            .padding(top = if (index > 0) 16.dp else 0.dp)
+    ) {
+        Icon(
+            imageVector = Icons.Rounded.DateRange,
+            contentDescription = "Date",
+            tint = MaterialTheme.typography.body2Secondary.color
+        )
+        Text(
+            date.formatShort(LocalContext.current),
+            style = MaterialTheme.typography.body2Secondary,
+            modifier = Modifier.align(Alignment.CenterVertically)
+        )
+    }
+
+}
+
+@Composable
 @Preview
 fun DiaryScreenPreview() {
     DiaryScreenContent(
-        listOf(
+        entries = listOf(
             DiaryEntry(id = 1, date = Date(), text = "Test asd;lfkj as;dlkfj a;sldkjf a;lskdfj"),
-        ),
-        onAddEntry = {}, onEditEntry = {})
+        )
+    )
 }

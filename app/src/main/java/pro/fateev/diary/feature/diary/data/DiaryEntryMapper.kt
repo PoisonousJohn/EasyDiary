@@ -16,7 +16,9 @@
 
 package pro.fateev.diary.feature.diary.data
 
+import pro.fateev.diary.feature.diary.data.MediaMapper.toDomainModel
 import pro.fateev.diary.feature.diary.data.room.DiaryEntryEntity
+import pro.fateev.diary.feature.diary.data.room.DiaryEntryMedia
 import pro.fateev.diary.feature.diary.domain.model.DiaryEntry
 
 object DiaryEntryMapper {
@@ -25,4 +27,11 @@ object DiaryEntryMapper {
 
     fun DiaryEntryEntity.toDomainModel(): DiaryEntry =
         DiaryEntry(id = id ?: -1, text = text ?: "", date = date)
+
+    fun DiaryEntryMedia.toDomainModel(): DiaryEntry =
+        DiaryEntry(
+            id = diaryEntry.id ?: -1,
+            text = diaryEntry.text ?: "",
+            date = diaryEntry.date,
+            media = media.map { it.toDomainModel() })
 }

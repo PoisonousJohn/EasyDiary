@@ -37,7 +37,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class DiaryEntryViewModel @Inject constructor(
-    private val repo: DiaryRepository,
+    private val _repo: DiaryRepository,
     savedState: SavedStateHandle,
     @ApplicationContext context: Context
 ) : BaseViewModel() {
@@ -47,10 +47,8 @@ class DiaryEntryViewModel @Inject constructor(
     private val _mediaBuffer = mutableListOf<Media>()
 
     private val _diaryEntry: MutableStateFlow<DiaryEntry> =
-        (
-            if (_entryId == -1L || _entryId == null) flowOf(DiaryEntry())
-            else repo.getDiaryEntry(_entryId)
-        )
+        (if (_entryId == -1L || _entryId == null) flowOf(DiaryEntry())
+        else _repo.getDiaryEntry(_entryId))
             .onEach {
                 _mediaBuffer.clear()
                 _mediaBuffer.addAll(it.media)
@@ -73,12 +71,12 @@ class DiaryEntryViewModel @Inject constructor(
 
     fun onSave() {
         viewModelScope.launch {
-            repo.saveDiaryEntry(_diaryEntry.value)
+            _repo.saveDiaryEntry(_diaryEntry.value)
             pop()
         }
     }
 
-    fun onAttachFile(uri: Uri?) {
+    fun onAttachMedia(uri: Uri?) {
         if (uri == null) return
 
         _contentResolver.openInputStream(uri).use {
@@ -87,6 +85,14 @@ class DiaryEntryViewModel @Inject constructor(
             viewModelScope.launch {
                 _diaryEntry.emit(_diaryEntry.value.copy(media = _mediaBuffer.toList()))
             }
+        }
+    }
+
+    fun onDeleteMedia(index: Int) {
+        _mediaBuffer.removeAt(index)
+        viewModelScope.launch {
+            _repo.removeMedia(_diaryEntry.value.id, index)
+            _diaryEntry.emit(_diaryEntry.value.copy(media = _mediaBuffer.toList()))
         }
     }
 }
