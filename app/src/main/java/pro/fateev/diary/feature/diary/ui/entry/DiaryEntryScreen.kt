@@ -60,6 +60,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -150,12 +151,13 @@ private fun AttachedMedia(images: List<Painter>, onDelete: (index: Int) -> Unit)
             Box(contentAlignment = Alignment.TopEnd)
             {
                 Image(
+                    contentScale = ContentScale.FillWidth,
                     painter = img.value,
                     contentDescription = "",
                     modifier = Modifier
                         .size(100.dp)
-                        .shadow(8.dp, shape)
                         .clip(shape)
+                        .shadow(8.dp, shape)
                 )
                 IconButton(
                     onClick = { onDelete(img.index) }, modifier = Modifier
