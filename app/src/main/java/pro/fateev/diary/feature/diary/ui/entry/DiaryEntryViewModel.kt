@@ -16,16 +16,21 @@
 
 package pro.fateev.diary.feature.diary.ui.entry
 
+import android.content.Context
+import android.net.Uri
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import pro.fateev.diary.extensions.FlowExtensions.mutableStateIn
 import pro.fateev.diary.feature.diary.domain.DiaryRepository
 import pro.fateev.diary.feature.diary.domain.model.DiaryEntry
+import pro.fateev.diary.feature.diary.domain.model.Media
 import pro.fateev.diary.ui.screen.common.BaseViewModel
 import java.util.Date
 import javax.inject.Inject
@@ -33,15 +38,25 @@ import javax.inject.Inject
 @HiltViewModel
 class DiaryEntryViewModel @Inject constructor(
     private val repo: DiaryRepository,
-    savedState: SavedStateHandle
+    savedState: SavedStateHandle,
+    @ApplicationContext context: Context
 ) : BaseViewModel() {
 
     private val _entryId = savedState.get<Long>("id")
-    private val _diaryEntry: MutableStateFlow<DiaryEntry> = repo.getDiary().map {
-        it.entries.firstOrNull { entry ->
-            entry.id == (_entryId ?: -1L)
-        } ?: DiaryEntry()
-    }.mutableStateIn(viewModelScope, DiaryEntry())
+    private val _contentResolver = context.contentResolver
+    private val _mediaBuffer = mutableListOf<Media>()
+
+    private val _diaryEntry: MutableStateFlow<DiaryEntry> =
+        (
+            if (_entryId == -1L || _entryId == null) flowOf(DiaryEntry())
+            else repo.getDiaryEntry(_entryId)
+        )
+            .onEach {
+                _mediaBuffer.clear()
+                _mediaBuffer.addAll(it.media)
+            }
+            .mutableStateIn(viewModelScope, DiaryEntry())
+
 
     val data: StateFlow<DiaryEntry>
         get() = _diaryEntry
@@ -60,6 +75,18 @@ class DiaryEntryViewModel @Inject constructor(
         viewModelScope.launch {
             repo.saveDiaryEntry(_diaryEntry.value)
             pop()
+        }
+    }
+
+    fun onAttachFile(uri: Uri?) {
+        if (uri == null) return
+
+        _contentResolver.openInputStream(uri).use {
+            val bytes = it?.buffered()?.readBytes()
+            _mediaBuffer.add(Media(data = bytes!!))
+            viewModelScope.launch {
+                _diaryEntry.emit(_diaryEntry.value.copy(media = _mediaBuffer.toList()))
+            }
         }
     }
 }

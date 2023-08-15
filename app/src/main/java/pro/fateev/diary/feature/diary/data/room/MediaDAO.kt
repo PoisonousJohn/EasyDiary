@@ -16,25 +16,11 @@
 
 package pro.fateev.diary.feature.diary.data.room
 
-import androidx.room.ColumnInfo
-import androidx.room.Embedded
-import androidx.room.Entity
-import androidx.room.PrimaryKey
-import androidx.room.Relation
-import java.util.Date
+import androidx.room.Dao
+import androidx.room.Query
 
-@Entity(tableName = "diary_entry")
-data class DiaryEntryEntity(
-    @PrimaryKey(autoGenerate = true) val id: Long?,
-    @ColumnInfo(name = "text") val text: String?,
-    @ColumnInfo(name = "entry_date") val date: Date,
-)
-
-data class DiaryEntryMedia(
-    @Embedded val diaryEntry: DiaryEntryEntity,
-    @Relation(
-        parentColumn = "id",
-        entityColumn = "diary_entry_id"
-    )
-    val media: List<MediaEntity>
-)
+@Dao
+interface MediaDAO {
+    @Query("SELECT * FROM media WHERE diary_entry_id = :diaryEntryId")
+    suspend fun getByUser(diaryEntryId: Long): Array<MediaEntity>
+}

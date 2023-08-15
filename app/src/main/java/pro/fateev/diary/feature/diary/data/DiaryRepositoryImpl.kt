@@ -52,8 +52,7 @@ class DiaryRepositoryImpl @Inject constructor(
 
     override suspend fun saveDiaryEntry(entry: DiaryEntry) {
         if (entry.id < 0) {
-            val savedEntry = entry
-                .copy(id = _dao.insert(entry.toEntity()).first())
+            _dao.insert(entry.toEntity()).first()
         } else {
             _dao.update(entry.toEntity())
         }
