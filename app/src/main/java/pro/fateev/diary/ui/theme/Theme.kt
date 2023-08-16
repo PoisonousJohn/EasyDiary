@@ -34,6 +34,7 @@ private val DarkColorPalette = darkColors(
     primaryVariant = Purple700,
     secondary = Teal200,
     onError = Color.Red,
+    background = BackgroundDark,
 )
 
 private val LightColorPalette = lightColors(
@@ -41,7 +42,7 @@ private val LightColorPalette = lightColors(
     primaryVariant = Purple700,
     secondary = Teal200,
     onError = Color.Red,
-    surface = SurfaceLight
+    background = BackgroundLight,
 
     /* Other default colors to override
     background = Color.White,

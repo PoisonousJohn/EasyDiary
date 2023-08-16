@@ -22,6 +22,7 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -36,18 +37,17 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Button
+import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.material.TextButton
-import androidx.compose.material.TextField
-import androidx.compose.material.TextFieldDefaults
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Image
 import androidx.compose.material.icons.outlined.ArrowDropDown
 import androidx.compose.material.icons.outlined.CalendarMonth
 import androidx.compose.runtime.Composable
@@ -117,32 +117,52 @@ fun DiaryEntryScreenContent(
                     onDelete = onDeleteMedia,
                 )
             }
-            val pickPictureLauncher = rememberLauncherForActivityResult(
-                ActivityResultContracts.PickVisualMedia(),
-                onResult = { uri -> onAttachFile(uri) }
-            )
-            TextField(
-                colors = TextFieldDefaults.textFieldColors(
-                    backgroundColor = MaterialTheme.colors.background,
-                    focusedIndicatorColor = Color.Transparent,
-                    unfocusedIndicatorColor = Color.Transparent,
-                    disabledIndicatorColor = Color.Transparent
-                ),
+            BasicTextField(
                 value = text,
                 onValueChange = onTextChanged,
+//                colors = TextFieldDefaults.textFieldColors(
+//                    backgroundColor = MaterialTheme.colors.surface,
+//                    focusedIndicatorColor = Color.Transparent,
+//                    unfocusedIndicatorColor = Color.Transparent,
+//                    disabledIndicatorColor = Color.Transparent
+//                ),
                 textStyle = MaterialTheme.typography.body1,
+                decorationBox = { innerTextField ->
+                    Box(
+                        modifier = Modifier
+                            .background(MaterialTheme.colors.surface)
+                            .padding(horizontal = 12.dp)
+                    ) { innerTextField() }
+                },
                 modifier = Modifier
                     .weight(1f)
                     .fillMaxWidth()
             )
-            Button(onClick = {
+            ToolsPanel(onAttachFile)
+        }
+    }
+}
+
+@Composable
+private fun ToolsPanel(onAttachFile: (Uri?) -> Unit) {
+    val pickPictureLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.PickVisualMedia(),
+        onResult = { uri -> onAttachFile(uri) }
+    )
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(MaterialTheme.colors.background)
+    ) {
+        Row {
+            IconButton(onClick = {
                 pickPictureLauncher.launch(
                     PickVisualMediaRequest(
                         ActivityResultContracts.PickVisualMedia.ImageOnly
                     )
                 )
-            }) {
-                Text("Attach file")
+            }, modifier = Modifier.size(44.dp)) {
+                Icon(Icons.Filled.Image, contentDescription = "")
             }
         }
     }
