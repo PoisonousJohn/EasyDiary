@@ -34,6 +34,7 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Button
 import androidx.compose.material.Icon
@@ -101,7 +102,7 @@ fun DiaryEntryScreenContent(
 ) {
     val context = LocalContext.current
     Scaffold(
-        topBar = { AppBar(date, context, onChangeDate, onSave) }
+        topBar = { AppBar(date, context, onChangeDate, onSave) },
     ) {
         Column(
             modifier = Modifier
@@ -110,6 +111,12 @@ fun DiaryEntryScreenContent(
                 .fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            if (images.isNotEmpty()) {
+                AttachedMedia(
+                    images = images,
+                    onDelete = onDeleteMedia,
+                )
+            }
             val pickPictureLauncher = rememberLauncherForActivityResult(
                 ActivityResultContracts.PickVisualMedia(),
                 onResult = { uri -> onAttachFile(uri) }
@@ -128,10 +135,13 @@ fun DiaryEntryScreenContent(
                     .weight(1f)
                     .fillMaxWidth()
             )
-            if (images.isNotEmpty()) {
-                AttachedMedia(images = images, onDelete = onDeleteMedia)
-            }
-            Button(onClick = { pickPictureLauncher.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)) }) {
+            Button(onClick = {
+                pickPictureLauncher.launch(
+                    PickVisualMediaRequest(
+                        ActivityResultContracts.PickVisualMedia.ImageOnly
+                    )
+                )
+            }) {
                 Text("Attach file")
             }
         }
@@ -139,16 +149,24 @@ fun DiaryEntryScreenContent(
 }
 
 @Composable
-private fun AttachedMedia(images: List<Painter>, onDelete: (index: Int) -> Unit) {
+private fun AttachedMedia(
+    images: List<Painter>,
+    onDelete: (index: Int) -> Unit,
+    modifier: Modifier = Modifier
+) {
     val roundingDp = 12.dp
     val shape = RoundedCornerShape(roundingDp)
-    Row(horizontalArrangement = Arrangement.spacedBy(roundingDp)) {
-        for (img in images.withIndex()) {
-            Box(contentAlignment = Alignment.TopEnd)
+    LazyRow(
+        modifier = modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.spacedBy(roundingDp, alignment = Alignment.Start),
+    ) {
+        items(images.size) {
+            val img = images[it]
+            Box(modifier = Modifier.padding(roundingDp), contentAlignment = Alignment.TopEnd)
             {
                 Image(
-                    contentScale = ContentScale.FillWidth,
-                    painter = img.value,
+                    contentScale = ContentScale.Crop,
+                    painter = img,
                     contentDescription = "",
                     modifier = Modifier
                         .size(100.dp)
@@ -156,11 +174,15 @@ private fun AttachedMedia(images: List<Painter>, onDelete: (index: Int) -> Unit)
                         .shadow(8.dp, shape)
                 )
                 IconButton(
-                    onClick = { onDelete(img.index) }, modifier = Modifier
+                    onClick = { onDelete(it) }, modifier = Modifier
                         .offset(8.dp, (-8).dp)
                         .wrapContentSize(unbounded = true)
                 ) {
-                    Icon(imageVector = Icons.Filled.Delete, contentDescription = "Delete", tint = MaterialTheme.colors.onError)
+                    Icon(
+                        imageVector = Icons.Filled.Delete,
+                        contentDescription = "Delete",
+                        tint = MaterialTheme.colors.onError
+                    )
                 }
             }
         }
@@ -220,6 +242,8 @@ fun DiaryEntryScreenPreviewLight() {
                 painterResource(id = R.drawable.ic_launcher_background),
                 painterResource(id = R.drawable.ic_launcher_background),
                 painterResource(id = R.drawable.ic_launcher_background),
+                painterResource(id = R.drawable.ic_launcher_background),
+                painterResource(id = R.drawable.ic_launcher_background),
             ),
             onSave = {},
             onTextChanged = {},
@@ -237,8 +261,6 @@ fun DiaryEntryScreenPreviewDark() {
             date = Date(),
             onSave = {},
             images = listOf(
-                painterResource(id = R.drawable.ic_launcher_background),
-                painterResource(id = R.drawable.ic_launcher_background),
                 painterResource(id = R.drawable.ic_launcher_background),
             ),
             onTextChanged = {},

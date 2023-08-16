@@ -16,7 +16,6 @@
 
 package pro.fateev.diary.ui.theme
 
-import android.provider.CalendarContract
 import androidx.compose.ui.graphics.Color
 
 val Purple200 = Color(0xFFBB86FC)
@@ -25,4 +24,5 @@ val Purple700 = Color(0xFF3700B3)
 val Teal200 = Color(0xFF03DAC5)
 val LightGray = Color.hsv(0f, 0f, 0.5f)
 val AlmostWhite = Color.hsv(0f, 0f, 0.9f)
+val SurfaceLight = Color.hsv(0f, 0f, 0.99f)
 val AlmostBlack = Color.hsv(0f, 0f, 0.3f)

@@ -24,15 +24,8 @@ import androidx.compose.material.darkColors
 import androidx.compose.material.lightColors
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.structuralEqualityPolicy
 import androidx.compose.ui.graphics.Color
 
-private object CustomThemeColors
-{
-    var text: MutableState<Color> = mutableStateOf(Color.Unspecified, structuralEqualityPolicy())
-}
 val Colors.text
     get() = if (isLight) AlmostBlack else AlmostWhite
 
@@ -48,6 +41,7 @@ private val LightColorPalette = lightColors(
     primaryVariant = Purple700,
     secondary = Teal200,
     onError = Color.Red,
+    surface = SurfaceLight
 
     /* Other default colors to override
     background = Color.White,
