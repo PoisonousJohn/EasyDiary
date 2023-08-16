@@ -19,10 +19,12 @@ package pro.fateev.diary.feature.diary.domain
 import kotlinx.coroutines.flow.Flow
 import pro.fateev.diary.feature.diary.domain.model.Diary
 import pro.fateev.diary.feature.diary.domain.model.DiaryEntry
+import pro.fateev.diary.feature.diary.domain.model.Media
 
 interface DiaryRepository {
     fun getDiary(): Flow<Diary>
     fun getDiaryEntry(id: Long): Flow<DiaryEntry>
     suspend fun removeMedia(diaryEntryId: Long, index: Int)
-    suspend fun saveDiaryEntry(entry: DiaryEntry)
+    suspend fun saveDiaryEntry(entry: DiaryEntry) : DiaryEntry
+    suspend fun addMedia(entry: DiaryEntry, media: Media): Media
 }

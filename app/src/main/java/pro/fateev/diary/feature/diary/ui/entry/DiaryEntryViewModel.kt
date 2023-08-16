@@ -27,6 +27,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
+import pro.fateev.diary.ImageUtils.toEXIFAwareImageBytes
 import pro.fateev.diary.extensions.FlowExtensions.mutableStateIn
 import pro.fateev.diary.feature.diary.domain.DiaryRepository
 import pro.fateev.diary.feature.diary.domain.model.DiaryEntry
@@ -79,12 +80,15 @@ class DiaryEntryViewModel @Inject constructor(
     fun onAttachMedia(uri: Uri?) {
         if (uri == null) return
 
-        _contentResolver.openInputStream(uri).use {
-            val bytes = it?.buffered()?.readBytes()
-            _mediaBuffer.add(Media(data = bytes!!))
-            viewModelScope.launch {
-                _diaryEntry.emit(_diaryEntry.value.copy(media = _mediaBuffer.toList()))
-            }
+        viewModelScope.launch {
+            val bytes = uri.toEXIFAwareImageBytes(_contentResolver)
+            _mediaBuffer.add(Media(data = bytes))
+            val savedEntry = _repo.saveDiaryEntry(getDataToSave())
+            // actualize media id
+            _mediaBuffer.clear()
+            _mediaBuffer.addAll(savedEntry.media)
+
+            _diaryEntry.emit(savedEntry)
         }
     }
 
@@ -95,4 +99,7 @@ class DiaryEntryViewModel @Inject constructor(
             _diaryEntry.emit(_diaryEntry.value.copy(media = _mediaBuffer.toList()))
         }
     }
+
+    private fun getDataToSave() =
+        _diaryEntry.value.copy(media = _mediaBuffer.toList())
 }

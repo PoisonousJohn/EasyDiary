@@ -25,7 +25,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.requiredWidth
+import androidx.compose.foundation.layout.requiredSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -45,14 +45,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.graphics.asImageBitmap
-import androidx.compose.ui.graphics.painter.BitmapPainter
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import pro.fateev.diary.ImageUtils.toPainter
 import pro.fateev.diary.extensions.FormattingExtensions.formatShort
 import pro.fateev.diary.feature.diary.domain.model.DiaryEntry
-import pro.fateev.diary.feature.diary.ui.entry.toBitmap
 import pro.fateev.diary.ui.theme.body2Secondary
 import java.util.Date
 
@@ -119,9 +118,9 @@ fun DiaryScreenContent(
                                     val m = entry.media[it]
                                     val shape = RoundedCornerShape(spacing)
                                     Image(
-                                        modifier = Modifier.requiredWidth(150.dp).clip(shape).shadow(4.dp, shape).weight(1f),
-                                        painter = m.data.toBitmap().asImageBitmap()
-                                            .let(::BitmapPainter), contentDescription = ""
+                                        contentScale = ContentScale.Crop,
+                                        modifier = Modifier.requiredSize(150.dp).clip(shape).shadow(4.dp, shape).weight(1f),
+                                        painter = m.data.toPainter(), contentDescription = ""
                                     )
                                 }
                             }

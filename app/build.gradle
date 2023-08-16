@@ -92,6 +92,7 @@ dependencies {
     implementation libs.compose.navigation.core
     implementation libs.compose.navigation.hilt
     implementation libs.compose.activity
+    implementation libs.exif
 
     testImplementation libs.androidx.junit
 

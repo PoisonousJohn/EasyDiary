@@ -29,6 +29,7 @@ import pro.fateev.diary.feature.diary.data.room.AppDatabase
 import pro.fateev.diary.feature.diary.domain.DiaryRepository
 import pro.fateev.diary.feature.diary.domain.model.Diary
 import pro.fateev.diary.feature.diary.domain.model.DiaryEntry
+import pro.fateev.diary.feature.diary.domain.model.Media
 import javax.inject.Inject
 
 class DiaryRepositoryImpl @Inject constructor(
@@ -55,16 +56,27 @@ class DiaryRepositoryImpl @Inject constructor(
                 .let { emit(it) }
         }
 
-    override suspend fun saveDiaryEntry(entry: DiaryEntry) {
-        entry.media.map { media ->
-            if (media.id < 0) _mediaDAO.insert(media.toEntity(entry.id))
-        }
+    override suspend fun saveDiaryEntry(entry: DiaryEntry): DiaryEntry {
+        var entryId = entry.id
         if (entry.id < 0) {
-            _diaryDAO.insert(entry.toEntity()).first()
+            entryId = _diaryDAO.insert(entry.toEntity()).first()
         } else {
             _diaryDAO.update(entry.toEntity())
         }
+        val media = entry.media.toMutableList()
+        media.mapIndexed { idx, item ->
+            if (item.id < 0) {
+                val id = _mediaDAO.insert(item.toEntity(entryId))
+                media[idx] = item.copy(id = id)
+            }
+        }
         notifyUpdated()
+        return entry.copy(media = media)
+    }
+
+    override suspend fun addMedia(entry: DiaryEntry, media: Media): Media {
+        val id = _mediaDAO.insert(media.toEntity(entry.id))
+        return media.copy(id = id)
     }
 
     override suspend fun removeMedia(diaryEntryId: Long, index: Int) {
@@ -74,7 +86,7 @@ class DiaryRepositoryImpl @Inject constructor(
 
     private fun notifyUpdated() = scope.launch {
         scope.launch {
-            val result = _diaryDAO.getAll()
+            _diaryDAO.getAll()
                 .map { it.toDomainModel() }
                 .let(::Diary)
                 .let(_diaryFlow::tryEmit)

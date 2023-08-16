@@ -17,10 +17,9 @@
 package pro.fateev.diary.feature.diary.ui.entry
 
 import android.content.Context
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -66,6 +65,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import pro.fateev.R
+import pro.fateev.diary.ImageUtils.toBitmap
 import pro.fateev.diary.extensions.DateExtensions.showDatePicker
 import pro.fateev.diary.extensions.FormattingExtensions.formatShort
 import pro.fateev.diary.ui.theme.AppTheme
@@ -111,7 +111,7 @@ fun DiaryEntryScreenContent(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             val pickPictureLauncher = rememberLauncherForActivityResult(
-                ActivityResultContracts.GetContent(),
+                ActivityResultContracts.PickVisualMedia(),
                 onResult = { uri -> onAttachFile(uri) }
             )
             TextField(
@@ -131,15 +131,11 @@ fun DiaryEntryScreenContent(
             if (images.isNotEmpty()) {
                 AttachedMedia(images = images, onDelete = onDeleteMedia)
             }
-            Button(onClick = { pickPictureLauncher.launch("image/*") }) {
+            Button(onClick = { pickPictureLauncher.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)) }) {
                 Text("Attach file")
             }
         }
     }
-}
-
-fun ByteArray.toBitmap(): Bitmap {
-    return BitmapFactory.decodeByteArray(this, 0, this.size)
 }
 
 @Composable
