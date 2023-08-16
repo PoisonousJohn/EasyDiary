@@ -17,11 +17,11 @@
 package pro.fateev.diary.feature.diary.ui
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -56,22 +56,37 @@ import pro.fateev.diary.ui.theme.body2Secondary
 import java.util.Date
 
 @Composable
-fun DiaryEntryCard(entry: DiaryEntry) = Card(
+fun DiaryEntryCard(entry: DiaryEntry, index: Int) = Card(
     elevation = 4.dp, modifier = Modifier
-        .padding(vertical = 8.dp)
         .fillMaxWidth()
 ) {
-    Row(
+    Column(
         modifier = Modifier
             .fillMaxWidth()
             .padding(8.dp)
     ) {
+        EntryHeader(index = index, date = entry.date)
+        if (entry.media.isNotEmpty()) {
+            val spacing = 12.dp
+            LazyRow(
+                modifier = Modifier.padding(vertical = 8.dp),
+                horizontalArrangement = Arrangement.spacedBy(spacing)) {
+                items(entry.media.size) {
+                    val m = entry.media[it]
+                    val shape = RoundedCornerShape(spacing)
+                    Image(
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier.requiredSize(150.dp).clip(shape).shadow(4.dp, shape).weight(1f),
+                        painter = m.data.toPainter(), contentDescription = ""
+                    )
+                }
+            }
+        }
         Text(
             text = entry.text,
             style = MaterialTheme.typography.body1,
             modifier = Modifier
-                .weight(1f)
-                .padding(end = 8.dp),
+                .fillMaxWidth()
         )
     }
 }
@@ -101,31 +116,15 @@ fun DiaryScreenContent(
         isFloatingActionButtonDocked = true,
         content = { padding ->
             LazyColumn(
-                modifier = Modifier.padding(padding), contentPadding = PaddingValues(12.dp)
+                modifier = Modifier.padding(padding).background(MaterialTheme.colors.background),
+                verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
                 items(entries.size) {
                     Column(
                         modifier = Modifier.clickable(onClick = { onEditEntry(entries[it]) })
                     ) {
-                        val spacing = 12.dp
                         val entry = entries[it]
-                        EntryHeader(index = it, date = entry.date)
-                        if (entry.media.isNotEmpty()) {
-                            LazyRow(
-                                modifier = Modifier.padding(top = spacing),
-                                horizontalArrangement = Arrangement.spacedBy(spacing)) {
-                                items(entry.media.size) {
-                                    val m = entry.media[it]
-                                    val shape = RoundedCornerShape(spacing)
-                                    Image(
-                                        contentScale = ContentScale.Crop,
-                                        modifier = Modifier.requiredSize(150.dp).clip(shape).shadow(4.dp, shape).weight(1f),
-                                        painter = m.data.toPainter(), contentDescription = ""
-                                    )
-                                }
-                            }
-                        }
-                        DiaryEntryCard(entry)
+                        DiaryEntryCard(entry, index = it)
                     }
                 }
             }
@@ -137,7 +136,7 @@ fun ColumnScope.EntryHeader(index: Int, date: Date) {
     Row(
         modifier = Modifier
             .align(Alignment.CenterHorizontally)
-            .padding(top = if (index > 0) 16.dp else 0.dp)
+//            .padding(top = if (index > 0) 16.dp else 0.dp)
     ) {
         Icon(
             imageVector = Icons.Rounded.DateRange,
@@ -158,7 +157,9 @@ fun ColumnScope.EntryHeader(index: Int, date: Date) {
 fun DiaryScreenPreview() {
     DiaryScreenContent(
         entries = listOf(
-            DiaryEntry(id = 1, date = Date(), text = "Test asd;lfkj as;dlkfj a;sldkjf a;lskdfj"),
+            DiaryEntry(id = 1, date = Date(), text = "One line\ntwo line\nthree line"),
+            DiaryEntry(id = 1, date = Date(), text = "One line\ntwo line\nthree line"),
+            DiaryEntry(id = 1, date = Date(), text = "One line\ntwo line\nthree line"),
         )
     )
 }
