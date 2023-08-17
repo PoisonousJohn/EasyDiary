@@ -31,6 +31,12 @@ object Routes {
         ))
     )
 
+    object ImagePreview : ScreenRoute(
+        routeDefinition = Definition("image-preview", argumentKeys = listOf(
+            "id" to { type = NavType.LongType; optional = false }
+        ))
+    )
+
     object Dashboard : ScreenRoute(
         routeDefinition = Definition("dashboard", argumentKeys = listOf(
             "username" to { type = NavType.StringType; optional = false }

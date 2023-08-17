@@ -23,8 +23,12 @@ import androidx.room.Query
 
 @Dao
 interface MediaDAO {
+    @Query("SELECT * FROM media WHERE id = :id")
+    suspend fun getById(id: Long): MediaEntity
+
     @Query("SELECT * FROM media WHERE diary_entry_id = :diaryEntryId")
     suspend fun getByDiaryEntryId(diaryEntryId: Long): Array<MediaEntity>
+
     @Insert
     suspend fun insert(media: MediaEntity): Long
 

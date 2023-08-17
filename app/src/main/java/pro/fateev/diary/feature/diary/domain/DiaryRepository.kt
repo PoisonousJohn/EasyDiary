@@ -27,4 +27,5 @@ interface DiaryRepository {
     suspend fun removeMedia(diaryEntryId: Long, index: Int)
     suspend fun saveDiaryEntry(entry: DiaryEntry) : DiaryEntry
     suspend fun addMedia(entry: DiaryEntry, media: Media): Media
+    suspend fun getMedia(mediaId: Long): Media
 }

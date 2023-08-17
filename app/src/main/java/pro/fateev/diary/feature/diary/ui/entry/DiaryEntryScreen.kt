@@ -85,7 +85,8 @@ fun DiaryEntryScreen(vm: DiaryEntryViewModel) {
         },
         onChangeDate = vm::onChangeDate,
         onAttachFile = vm::onAttachMedia,
-        onDeleteMedia = vm::onDeleteMedia
+        onImageClick = vm::onOpenImagePreview,
+        onDeleteMedia = vm::onDeleteMedia,
     )
 }
 
@@ -98,6 +99,7 @@ fun DiaryEntryScreenContent(
     onSave: () -> Unit = {},
     onChangeDate: (Date) -> Unit = {},
     onAttachFile: (Uri?) -> Unit = {},
+    onImageClick: (index: Int) -> Unit = {},
     onDeleteMedia: (index: Int) -> Unit = {}
 ) {
     val context = LocalContext.current
@@ -115,6 +117,7 @@ fun DiaryEntryScreenContent(
                 AttachedMedia(
                     images = images,
                     onDelete = onDeleteMedia,
+                    onImageClick = onImageClick
                 )
             }
             BasicTextField(
@@ -171,6 +174,7 @@ private fun ToolsPanel(onAttachFile: (Uri?) -> Unit) {
 @Composable
 private fun AttachedMedia(
     images: List<Painter>,
+    onImageClick: (index: Int) -> Unit,
     onDelete: (index: Int) -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -189,6 +193,7 @@ private fun AttachedMedia(
                     painter = img,
                     contentDescription = "",
                     modifier = Modifier
+                        .clickable { onImageClick.invoke(it) }
                         .size(100.dp)
                         .clip(shape)
                         .shadow(8.dp, shape)

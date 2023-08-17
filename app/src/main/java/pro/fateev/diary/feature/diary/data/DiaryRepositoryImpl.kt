@@ -92,4 +92,8 @@ class DiaryRepositoryImpl @Inject constructor(
                 .let(_diaryFlow::tryEmit)
         }
     }
+
+    override suspend fun getMedia(mediaId: Long): Media {
+        return _mediaDAO.getById(mediaId).toDomainModel()
+    }
 }

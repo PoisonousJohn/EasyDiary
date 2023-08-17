@@ -32,6 +32,8 @@ import pro.fateev.diary.extensions.FlowExtensions.mutableStateIn
 import pro.fateev.diary.feature.diary.domain.DiaryRepository
 import pro.fateev.diary.feature.diary.domain.model.DiaryEntry
 import pro.fateev.diary.feature.diary.domain.model.Media
+import pro.fateev.diary.navigation.routing.generatePath
+import pro.fateev.diary.ui.screen.Routes
 import pro.fateev.diary.ui.screen.common.BaseViewModel
 import java.util.Date
 import javax.inject.Inject
@@ -89,6 +91,13 @@ class DiaryEntryViewModel @Inject constructor(
             _mediaBuffer.addAll(savedEntry.media)
 
             _diaryEntry.emit(savedEntry)
+        }
+    }
+
+    fun onOpenImagePreview(index: Int) {
+        viewModelScope.launch {
+            val path = Routes.ImagePreview.generatePath("id" to _mediaBuffer[index].id)
+            navigateTo(path)
         }
     }
 
