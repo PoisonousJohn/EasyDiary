@@ -57,7 +57,7 @@ import pro.fateev.diary.ui.theme.body2Secondary
 import java.util.Date
 
 @Composable
-fun DiaryEntryCard(entry: DiaryEntry, index: Int, onImageClick: (Int) -> Unit = {}) = Card(
+fun DiaryEntryCard(entry: DiaryEntry, onImageClick: (Int) -> Unit = {}) = Card(
     elevation = 4.dp, modifier = Modifier
         .fillMaxWidth()
 ) {
@@ -73,8 +73,8 @@ fun DiaryEntryCard(entry: DiaryEntry, index: Int, onImageClick: (Int) -> Unit = 
                 modifier = Modifier.padding(vertical = 8.dp),
                 horizontalArrangement = Arrangement.spacedBy(spacing)
             ) {
-                items(entry.media.size) {
-                    val m = entry.media[it]
+                items(entry.media.size) { mediaIndex ->
+                    val m = entry.media[mediaIndex]
                     val shape = RoundedCornerShape(spacing)
                     Image(
                         contentScale = ContentScale.Crop,
@@ -83,7 +83,7 @@ fun DiaryEntryCard(entry: DiaryEntry, index: Int, onImageClick: (Int) -> Unit = 
                             .clip(shape)
                             .shadow(4.dp, shape)
                             .weight(1f)
-                            .clickable { onImageClick.invoke(index) },
+                            .clickable { onImageClick.invoke(mediaIndex) },
                         painter = m.data.toPainter(), contentDescription = ""
                     )
                 }
@@ -140,9 +140,8 @@ fun DiaryScreenContent(
                     ) {
                         val entry = entries[entryIndex]
                         DiaryEntryCard(
-                            entry,
-                            index = entryIndex,
-                            onImageClick = { mediaIndex -> onImageClick.invoke(entries[entryIndex].media[mediaIndex]) })
+                            entry
+                        ) { mediaIndex -> onImageClick.invoke(entries[entryIndex].media[mediaIndex]) }
                     }
                 }
             }
