@@ -52,11 +52,12 @@ import androidx.compose.ui.unit.dp
 import pro.fateev.diary.ImageUtils.toPainter
 import pro.fateev.diary.extensions.FormattingExtensions.formatShort
 import pro.fateev.diary.feature.diary.domain.model.DiaryEntry
+import pro.fateev.diary.feature.diary.domain.model.Media
 import pro.fateev.diary.ui.theme.body2Secondary
 import java.util.Date
 
 @Composable
-fun DiaryEntryCard(entry: DiaryEntry, index: Int) = Card(
+fun DiaryEntryCard(entry: DiaryEntry, index: Int, onImageClick: (Int) -> Unit = {}) = Card(
     elevation = 4.dp, modifier = Modifier
         .fillMaxWidth()
 ) {
@@ -65,18 +66,24 @@ fun DiaryEntryCard(entry: DiaryEntry, index: Int) = Card(
             .fillMaxWidth()
             .padding(8.dp)
     ) {
-        EntryHeader(index = index, date = entry.date)
+        EntryHeader(date = entry.date)
         if (entry.media.isNotEmpty()) {
             val spacing = 12.dp
             LazyRow(
                 modifier = Modifier.padding(vertical = 8.dp),
-                horizontalArrangement = Arrangement.spacedBy(spacing)) {
+                horizontalArrangement = Arrangement.spacedBy(spacing)
+            ) {
                 items(entry.media.size) {
                     val m = entry.media[it]
                     val shape = RoundedCornerShape(spacing)
                     Image(
                         contentScale = ContentScale.Crop,
-                        modifier = Modifier.requiredSize(150.dp).clip(shape).shadow(4.dp, shape).weight(1f),
+                        modifier = Modifier
+                            .requiredSize(150.dp)
+                            .clip(shape)
+                            .shadow(4.dp, shape)
+                            .weight(1f)
+                            .clickable { onImageClick.invoke(index) },
                         painter = m.data.toPainter(), contentDescription = ""
                     )
                 }
@@ -94,14 +101,20 @@ fun DiaryEntryCard(entry: DiaryEntry, index: Int) = Card(
 @Composable
 fun DiaryScreen(vm: DiaryScreenViewModel) {
     val entries: List<DiaryEntry> = vm.entries.collectAsState(initial = emptyList()).value
-    DiaryScreenContent(entries, onAddEntry = vm::onAddEntry, onEditEntry = vm::onEditEntry)
+    DiaryScreenContent(
+        entries,
+        onAddEntry = vm::onAddEntry,
+        onEditEntry = vm::onEditEntry,
+        onImageClick = vm::onImageClick
+    )
 }
 
 @Composable
 fun DiaryScreenContent(
     entries: List<DiaryEntry>,
     onAddEntry: () -> Unit = {},
-    onEditEntry: (DiaryEntry) -> Unit = {}
+    onEditEntry: (DiaryEntry) -> Unit = {},
+    onImageClick: (Media) -> Unit = {}
 ) {
     Scaffold(
         floatingActionButton = {
@@ -116,15 +129,20 @@ fun DiaryScreenContent(
         isFloatingActionButtonDocked = true,
         content = { padding ->
             LazyColumn(
-                modifier = Modifier.padding(padding).background(MaterialTheme.colors.background),
+                modifier = Modifier
+                    .padding(padding)
+                    .background(MaterialTheme.colors.background),
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
-                items(entries.size) {
+                items(entries.size) { entryIndex ->
                     Column(
-                        modifier = Modifier.clickable(onClick = { onEditEntry(entries[it]) })
+                        modifier = Modifier.clickable(onClick = { onEditEntry(entries[entryIndex]) })
                     ) {
-                        val entry = entries[it]
-                        DiaryEntryCard(entry, index = it)
+                        val entry = entries[entryIndex]
+                        DiaryEntryCard(
+                            entry,
+                            index = entryIndex,
+                            onImageClick = { mediaIndex -> onImageClick.invoke(entries[entryIndex].media[mediaIndex]) })
                     }
                 }
             }
@@ -132,11 +150,9 @@ fun DiaryScreenContent(
 }
 
 @Composable
-fun ColumnScope.EntryHeader(index: Int, date: Date) {
+fun ColumnScope.EntryHeader(date: Date) {
     Row(
-        modifier = Modifier
-            .align(Alignment.CenterHorizontally)
-//            .padding(top = if (index > 0) 16.dp else 0.dp)
+        modifier = Modifier.align(Alignment.CenterHorizontally)
     ) {
         Icon(
             imageVector = Icons.Rounded.DateRange,

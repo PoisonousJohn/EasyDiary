@@ -24,13 +24,15 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import pro.fateev.diary.feature.diary.domain.DiaryRepository
 import pro.fateev.diary.feature.diary.domain.model.DiaryEntry
+import pro.fateev.diary.feature.diary.domain.model.Media
 import pro.fateev.diary.navigation.routing.generatePath
 import pro.fateev.diary.ui.screen.Routes
 import pro.fateev.diary.ui.screen.common.BaseViewModel
 import javax.inject.Inject
 
 @HiltViewModel
-class DiaryScreenViewModel @Inject constructor(private val repo: DiaryRepository) : BaseViewModel()  {
+class DiaryScreenViewModel @Inject constructor(private val repo: DiaryRepository) :
+    BaseViewModel() {
     private val _entries = MutableStateFlow(emptyList<DiaryEntry>())
 
     val entries: Flow<List<DiaryEntry>>
@@ -50,10 +52,16 @@ class DiaryScreenViewModel @Inject constructor(private val repo: DiaryRepository
         }
     }
 
-    fun onEditEntry(entry: DiaryEntry)
-    {
+    fun onEditEntry(entry: DiaryEntry) {
         viewModelScope.launch {
             navigateTo(Routes.DiaryEntry.generatePath("id" to entry.id))
         }
+    }
+
+    fun onImageClick(media: Media) {
+        viewModelScope.launch {
+            navigateTo(Routes.ImagePreview.generatePath("id" to media.id))
+        }
+
     }
 }
