@@ -23,23 +23,21 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
 import pro.fateev.diary.feature.diary.data.DiaryEntryMapper.toDomainModel
 import pro.fateev.diary.feature.diary.data.DiaryEntryMapper.toEntity
-import pro.fateev.diary.feature.diary.data.MediaMapper.toDomainModel
-import pro.fateev.diary.feature.diary.data.MediaMapper.toEntity
 import pro.fateev.diary.feature.diary.data.room.AppDatabase
 import pro.fateev.diary.feature.diary.domain.DiaryRepository
+import pro.fateev.diary.feature.diary.domain.MediaRepository
 import pro.fateev.diary.feature.diary.domain.model.Diary
 import pro.fateev.diary.feature.diary.domain.model.DiaryEntry
-import pro.fateev.diary.feature.diary.domain.model.Media
 import javax.inject.Inject
 
 class DiaryRepositoryImpl @Inject constructor(
     private val scope: CoroutineScope,
-    appDatabase: AppDatabase
+    appDatabase: AppDatabase,
+    private val _mediaRepo: MediaRepository,
 ) : DiaryRepository {
 
     private val _diaryFlow = MutableSharedFlow<Diary>(replay = 1)
     private val _diaryDAO = appDatabase.diaryEntryDAO
-    private val _mediaDAO = appDatabase.mediaDAO
 
     init {
         notifyUpdated()
@@ -49,11 +47,10 @@ class DiaryRepositoryImpl @Inject constructor(
 
     override fun getDiaryEntry(id: Long): Flow<DiaryEntry> =
         flow {
-            val media = _mediaDAO.getByDiaryEntryId(id)
-            _diaryDAO.getById(id)
+            val diaryEntry = _diaryDAO.getById(id)
                 .toDomainModel()
-                .copy(media =  media.map { it.toDomainModel() })
-                .let { emit(it) }
+            val media = _mediaRepo.getMediaByDiaryEntryId(id)
+            emit(diaryEntry.copy(media = media))
         }
 
     override suspend fun saveDiaryEntry(entry: DiaryEntry): DiaryEntry {
@@ -66,34 +63,24 @@ class DiaryRepositoryImpl @Inject constructor(
         val media = entry.media.toMutableList()
         media.mapIndexed { idx, item ->
             if (item.id < 0) {
-                val id = _mediaDAO.insert(item.toEntity(entryId))
-                media[idx] = item.copy(id = id)
+                val newMedia = _mediaRepo.addMedia(entryId, item)
+                media[idx] = newMedia
             }
         }
         notifyUpdated()
-        return entry.copy(media = media)
-    }
-
-    override suspend fun addMedia(entry: DiaryEntry, media: Media): Media {
-        val id = _mediaDAO.insert(media.toEntity(entry.id))
-        return media.copy(id = id)
-    }
-
-    override suspend fun removeMedia(diaryEntryId: Long, index: Int) {
-        val media = _mediaDAO.getByDiaryEntryId(diaryEntryId)[index]
-        _mediaDAO.delete(media)
+        return entry.copy(id = entryId, media = media)
     }
 
     private fun notifyUpdated() = scope.launch {
         scope.launch {
             _diaryDAO.getAll()
-                .map { it.toDomainModel() }
+                .map {
+                    val media = _mediaRepo.getMediaByDiaryEntryId(it.id!!)
+                    it.toDomainModel().copy(media = media)
+                }
                 .let(::Diary)
                 .let(_diaryFlow::tryEmit)
         }
     }
 
-    override suspend fun getMedia(mediaId: Long): Media {
-        return _mediaDAO.getById(mediaId).toDomainModel()
-    }
 }

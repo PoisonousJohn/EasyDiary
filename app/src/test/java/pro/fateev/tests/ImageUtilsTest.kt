@@ -14,14 +14,18 @@
  * limitations under the License.
  */
 
-package pro.fateev.diary.feature.diary.domain
+package pro.fateev.tests
 
-import kotlinx.coroutines.flow.Flow
-import pro.fateev.diary.feature.diary.domain.model.Diary
-import pro.fateev.diary.feature.diary.domain.model.DiaryEntry
+import org.junit.Assert.assertEquals
+import org.junit.Test
+import pro.fateev.diary.ImageUtils
 
-interface DiaryRepository {
-    fun getDiary(): Flow<Diary>
-    fun getDiaryEntry(id: Long): Flow<DiaryEntry>
-    suspend fun saveDiaryEntry(entry: DiaryEntry) : DiaryEntry
+class ImageUtilsTest {
+    @Test
+    fun testChunks() {
+        val subject = ByteArray(10, init = { it.toByte() })
+        val slices = ImageUtils.sliceInChunks(subject, 3).toTypedArray()
+        val result = ImageUtils.joinChunks(slices)
+        assertEquals(subject.toList(), result.toList())
+    }
 }

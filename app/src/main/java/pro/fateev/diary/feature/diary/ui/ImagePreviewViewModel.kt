@@ -20,13 +20,13 @@ import androidx.lifecycle.SavedStateHandle
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
-import pro.fateev.diary.feature.diary.domain.DiaryRepository
+import pro.fateev.diary.feature.diary.domain.MediaRepository
 import pro.fateev.diary.ui.screen.common.BaseViewModel
 import javax.inject.Inject
 
 @HiltViewModel
 class ImagePreviewViewModel @Inject constructor(
-    private val _repo: DiaryRepository,
+    private val _repo: MediaRepository,
     savedState: SavedStateHandle,
 ) : BaseViewModel() {
 
@@ -34,6 +34,6 @@ class ImagePreviewViewModel @Inject constructor(
 
     val image: Flow<ByteArray>
         get() = flow {
-            emit(_repo.getMedia(mediaId).data)
+            emit(_repo.getMediaByMediaId(mediaId).data)
         }
 }

@@ -24,10 +24,11 @@ import androidx.room.TypeConverters
 @Database(
     entities = [
         DiaryEntryEntity::class,
-        MediaEntity::class
+        MediaEntity::class,
+        MediaChunkEntity::class
     ],
     autoMigrations = [
-        AutoMigration (from = 1, to = 2)
+        AutoMigration(from = 1, to = 2)
     ],
     version = 2
 )

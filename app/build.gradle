@@ -45,6 +45,7 @@ android {
     buildTypes {
         release {
             proguardFile(getDefaultProguardFile("proguard-android-optimize.txt"))
+            signingConfig signingConfigs.debug
         }
     }
     compileOptions {
@@ -95,6 +96,7 @@ dependencies {
     implementation libs.compose.activity
     implementation libs.exif
     implementation libs.zoomable
+    implementation libs.coil
 
     testImplementation libs.androidx.junit
 

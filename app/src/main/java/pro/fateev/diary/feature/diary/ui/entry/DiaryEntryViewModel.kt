@@ -30,6 +30,7 @@ import kotlinx.coroutines.launch
 import pro.fateev.diary.ImageUtils.toEXIFAwareImageBytes
 import pro.fateev.diary.extensions.FlowExtensions.mutableStateIn
 import pro.fateev.diary.feature.diary.domain.DiaryRepository
+import pro.fateev.diary.feature.diary.domain.MediaRepository
 import pro.fateev.diary.feature.diary.domain.model.DiaryEntry
 import pro.fateev.diary.feature.diary.domain.model.Media
 import pro.fateev.diary.navigation.routing.generatePath
@@ -40,7 +41,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class DiaryEntryViewModel @Inject constructor(
-    private val _repo: DiaryRepository,
+    private val _diaryRepo: DiaryRepository,
+    private val _mediaRepo: MediaRepository,
     savedState: SavedStateHandle,
     @ApplicationContext context: Context
 ) : BaseViewModel() {
@@ -51,7 +53,7 @@ class DiaryEntryViewModel @Inject constructor(
 
     private val _diaryEntry: MutableStateFlow<DiaryEntry> =
         (if (_entryId == -1L || _entryId == null) flowOf(DiaryEntry())
-        else _repo.getDiaryEntry(_entryId))
+        else _diaryRepo.getDiaryEntry(_entryId))
             .onEach {
                 _mediaBuffer.clear()
                 _mediaBuffer.addAll(it.media)
@@ -74,7 +76,7 @@ class DiaryEntryViewModel @Inject constructor(
 
     fun onSave() {
         viewModelScope.launch {
-            _repo.saveDiaryEntry(_diaryEntry.value)
+            _diaryRepo.saveDiaryEntry(_diaryEntry.value)
             pop()
         }
     }
@@ -85,7 +87,7 @@ class DiaryEntryViewModel @Inject constructor(
         viewModelScope.launch {
             val bytes = uri.toEXIFAwareImageBytes(_contentResolver)
             _mediaBuffer.add(Media(data = bytes))
-            val savedEntry = _repo.saveDiaryEntry(getDataToSave())
+            val savedEntry = _diaryRepo.saveDiaryEntry(getDataToSave())
             // actualize media id
             _mediaBuffer.clear()
             _mediaBuffer.addAll(savedEntry.media)
@@ -104,7 +106,7 @@ class DiaryEntryViewModel @Inject constructor(
     fun onDeleteMedia(index: Int) {
         _mediaBuffer.removeAt(index)
         viewModelScope.launch {
-            _repo.removeMedia(_diaryEntry.value.id, index)
+            _mediaRepo.removeMedia(_diaryEntry.value.id, index)
             _diaryEntry.emit(_diaryEntry.value.copy(media = _mediaBuffer.toList()))
         }
     }

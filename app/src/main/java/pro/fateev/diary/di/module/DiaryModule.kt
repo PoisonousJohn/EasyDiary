@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+@file:Suppress("unused")
+
 package pro.fateev.diary.di.module
 
 import android.content.Context
@@ -25,8 +27,10 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import pro.fateev.diary.feature.diary.data.DiaryRepositoryImpl
+import pro.fateev.diary.feature.diary.data.MediaRepositoryImpl
 import pro.fateev.diary.feature.diary.data.room.AppDatabase
 import pro.fateev.diary.feature.diary.domain.DiaryRepository
+import pro.fateev.diary.feature.diary.domain.MediaRepository
 import javax.inject.Singleton
 
 @InstallIn(SingletonComponent::class)
@@ -35,6 +39,9 @@ abstract class DiaryModule {
     @Singleton
     @Binds
     abstract fun provideDiaryRepo(repo: DiaryRepositoryImpl): DiaryRepository
+    @Singleton
+    @Binds
+    abstract fun provideMediaRepo(repo: MediaRepositoryImpl): MediaRepository
 
     companion object {
         @Singleton

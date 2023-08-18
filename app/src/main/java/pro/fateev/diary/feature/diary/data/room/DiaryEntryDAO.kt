@@ -19,13 +19,15 @@ package pro.fateev.diary.feature.diary.data.room
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
+import androidx.room.Transaction
 import androidx.room.Update
 
 @Dao
 interface DiaryEntryDAO {
 
+    @Transaction
     @Query("SELECT * FROM diary_entry ORDER BY entry_date DESC")
-    suspend fun getAll(): Array<DiaryEntryMedia>
+    suspend fun getAll(): Array<DiaryEntryEntity>
 
     @Query("SELECT * FROM diary_entry WHERE id = :id LIMIT 1")
     suspend fun getById(id: Long): DiaryEntryEntity

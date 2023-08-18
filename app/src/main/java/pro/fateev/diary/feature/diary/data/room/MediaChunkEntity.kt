@@ -20,34 +20,34 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
-@Entity(tableName = "media")
-data class MediaEntity(
+@Entity(tableName = "media_chunk")
+data class MediaChunkEntity(
     @PrimaryKey(autoGenerate = true)
     val id: Long?,
 
-    @ColumnInfo(name = "mime_type")
-    val mimeType: String,
+    @ColumnInfo(name = "media_id")
+    val mediaId: Long,
 
-    @ColumnInfo(name = "diary_entry_id")
-    val diaryEntryId: Long,
+    @ColumnInfo(name = "data", typeAffinity = ColumnInfo.BLOB)
+    val data: ByteArray,
 ) {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
 
-        other as MediaEntity
+        other as MediaChunkEntity
 
         if (id != other.id) return false
-        if (mimeType != other.mimeType) return false
-        if (diaryEntryId != other.diaryEntryId) return false
+        if (mediaId != other.mediaId) return false
+        if (!data.contentEquals(other.data)) return false
 
         return true
     }
 
     override fun hashCode(): Int {
         var result = id?.hashCode() ?: 0
-        result = 31 * result + mimeType.hashCode()
-        result = 31 * result + diaryEntryId.hashCode()
+        result = 31 * result + mediaId.hashCode()
+        result = 31 * result + data.contentHashCode()
         return result
     }
 }

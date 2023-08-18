@@ -16,7 +16,6 @@
 
 package pro.fateev.diary.feature.diary.ui
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -49,7 +48,8 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import pro.fateev.diary.ImageUtils.toPainter
+import coil.compose.AsyncImage
+import coil.request.ImageRequest
 import pro.fateev.diary.extensions.FormattingExtensions.formatShort
 import pro.fateev.diary.feature.diary.domain.model.DiaryEntry
 import pro.fateev.diary.feature.diary.domain.model.Media
@@ -76,7 +76,12 @@ fun DiaryEntryCard(entry: DiaryEntry, onImageClick: (Int) -> Unit = {}) = Card(
                 items(entry.media.size) { mediaIndex ->
                     val m = entry.media[mediaIndex]
                     val shape = RoundedCornerShape(spacing)
-                    Image(
+                    val imageRequest = ImageRequest.Builder(LocalContext.current)
+                        .data(m.data)
+                        .crossfade(true)
+                        .build()
+                    AsyncImage(
+                        model = imageRequest,
                         contentScale = ContentScale.Crop,
                         modifier = Modifier
                             .requiredSize(150.dp)
@@ -84,7 +89,7 @@ fun DiaryEntryCard(entry: DiaryEntry, onImageClick: (Int) -> Unit = {}) = Card(
                             .shadow(4.dp, shape)
                             .weight(1f)
                             .clickable { onImageClick.invoke(mediaIndex) },
-                        painter = m.data.toPainter(), contentDescription = ""
+                        contentDescription = ""
                     )
                 }
             }

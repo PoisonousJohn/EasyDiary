@@ -25,6 +25,8 @@ import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.exifinterface.media.ExifInterface
 import java.io.ByteArrayOutputStream
+import kotlin.math.ceil
+import kotlin.math.min
 
 
 object ImageUtils {
@@ -43,26 +45,28 @@ object ImageUtils {
         contentResolver.openInputStream(this).use {
             if (it == null) error("Failed to open stream to ${this.path}")
             val bytes = it.buffered().readBytes()
-
             val bitmap = bytes.toBitmap()
-            val matrix = Matrix()
+            try {
+                val matrix = Matrix()
 
-            if (orientation != ExifInterface.ORIENTATION_NORMAL) {
-                matrix.preRotate(exifToDegrees(orientation).toFloat())
-                val rotatedBitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.width, bitmap.height, matrix, true)
+                if (orientation != ExifInterface.ORIENTATION_NORMAL) {
+                    matrix.preRotate(exifToDegrees(orientation).toFloat())
+                    val rotatedBitmap =
+                        Bitmap.createBitmap(bitmap, 0, 0, bitmap.width, bitmap.height, matrix, true)
+                    val result = rotatedBitmap.toPNGByteArray()
+                    rotatedBitmap.recycle()
+                    return result
+                }
+
+                return bitmap.toPNGByteArray()
+            } finally {
                 bitmap.recycle()
-                return rotatedBitmap.toPNGByteArray()
             }
-
-            val result = bitmap.toPNGByteArray()
-            bitmap.recycle()
-
-            return result
         }
     }
 
     fun ByteArray.toPainter(): BitmapPainter =
-        toBitmap().asImageBitmap() .let(::BitmapPainter)
+        toBitmap().asImageBitmap().let(::BitmapPainter)
 
     fun Bitmap.toPNGByteArray(): ByteArray {
         val stream = ByteArrayOutputStream()
@@ -83,5 +87,30 @@ object ImageUtils {
     fun ByteArray.toBitmap(): Bitmap {
         return BitmapFactory.decodeByteArray(this, 0, size)
             ?: error("Failed to decode bitmap")
+    }
+
+    fun sliceInChunks(byteArray: ByteArray, chunkSizeBytes: Int): List<ByteArray> {
+        val chunks = ceil(byteArray.size.toDouble() / chunkSizeBytes).toInt()
+        val result = mutableListOf<ByteArray>()
+        for (chunkIdx in 0 until chunks) {
+            val offset = chunkIdx * chunkSizeBytes
+            val bytesToCopy = min(chunkSizeBytes, byteArray.size - offset)
+            val chunkData = ByteArray(bytesToCopy)
+            byteArray.copyInto(chunkData, 0, offset, offset + bytesToCopy)
+            result.add(chunkData)
+        }
+
+        return result
+    }
+
+    fun joinChunks(dataChunks: Array<ByteArray>) : ByteArray {
+        val size = dataChunks.sumOf { it.size }
+        val data = ByteArray(size)
+        var offset = 0
+        for (chunk in dataChunks) {
+            chunk.copyInto(data, offset, 0, chunk.size)
+            offset += chunk.size
+        }
+        return data
     }
 }
