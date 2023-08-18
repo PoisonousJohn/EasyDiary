@@ -19,6 +19,7 @@ package pro.fateev.diary.ui.theme
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material.Colors
 import androidx.compose.material.LocalContentColor
+import androidx.compose.material.LocalTextStyle
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.darkColors
 import androidx.compose.material.lightColors
@@ -70,7 +71,10 @@ fun AppTheme(
         typography = Typography,
         shapes = Shapes,
         content = {
-            CompositionLocalProvider(LocalContentColor provides colors.text) {
+            CompositionLocalProvider(
+                LocalContentColor provides colors.text,
+                LocalTextStyle provides LocalTextStyle.current.copy(color = colors.text)
+            ) {
                 content()
             }
         }

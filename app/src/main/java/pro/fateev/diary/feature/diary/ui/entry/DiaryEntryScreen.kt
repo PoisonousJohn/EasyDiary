@@ -70,6 +70,7 @@ import pro.fateev.diary.ImageUtils.toBitmap
 import pro.fateev.diary.extensions.DateExtensions.showDatePicker
 import pro.fateev.diary.extensions.FormattingExtensions.formatShort
 import pro.fateev.diary.ui.theme.AppTheme
+import pro.fateev.diary.ui.theme.text
 import java.util.Date
 
 @Composable
@@ -123,13 +124,7 @@ fun DiaryEntryScreenContent(
             BasicTextField(
                 value = text,
                 onValueChange = onTextChanged,
-//                colors = TextFieldDefaults.textFieldColors(
-//                    backgroundColor = MaterialTheme.colors.surface,
-//                    focusedIndicatorColor = Color.Transparent,
-//                    unfocusedIndicatorColor = Color.Transparent,
-//                    disabledIndicatorColor = Color.Transparent
-//                ),
-                textStyle = MaterialTheme.typography.body1,
+                textStyle = MaterialTheme.typography.body1.copy(color = MaterialTheme.colors.text),
                 decorationBox = { innerTextField ->
                     Box(
                         modifier = Modifier
