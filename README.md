@@ -6,7 +6,7 @@
 ![Screenshot-4](/screenshots/screenshot4.png | width=200)
 ![Screenshot-5](/screenshots/screenshot5.png | width=200)
 
-This diary does not send any date to the network and does not have a permission for that.
+This diary does not send any data to the network and does not have a permission for that.
 
 It stores the data inside SQLite database on your device in the application's folder.
 
