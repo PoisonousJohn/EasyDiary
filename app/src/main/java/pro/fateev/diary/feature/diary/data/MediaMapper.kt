@@ -16,20 +16,20 @@
 
 package pro.fateev.diary.feature.diary.data
 
-import pro.fateev.diary.ImageUtils
 import pro.fateev.diary.feature.diary.data.room.MediaEntity
 import pro.fateev.diary.feature.diary.domain.model.Media
 
 object MediaMapper {
-    fun Media.toEntity(diaryEntryId: Long): MediaEntity =
+    fun Media.toNotAttachedMediaEntity(): MediaEntity = toEntity(diaryEntryId = null)
+    fun Media.toEntity(diaryEntryId: Long?): MediaEntity =
         MediaEntity(
             id = if (id == -1L) null else id,
             diaryEntryId = diaryEntryId,
-            mimeType = "image/*"
+            mimeType = "image/*",
+            pathToFile = pathToFile
         )
 
-    fun MediaEntity.toDomainModel(dataChunks: Array<ByteArray>): Media
-    {
-        return Media(id = id ?: -1, data = ImageUtils.joinChunks(dataChunks))
+    fun MediaEntity.toDomainModel(): Media {
+        return Media(id = id ?: -1, pathToFile = pathToFile)
     }
 }

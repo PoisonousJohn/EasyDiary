@@ -21,6 +21,7 @@ import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Transaction
+import androidx.room.Update
 
 @Dao
 interface MediaDAO {
@@ -30,23 +31,20 @@ interface MediaDAO {
     @Query("SELECT * FROM media WHERE diary_entry_id = :diaryEntryId")
     suspend fun getByDiaryEntryId(diaryEntryId: Long): Array<MediaEntity>
 
+    @Query("SELECT * FROM media WHERE diary_entry_id is null")
+    suspend fun getDraftMedia(): Array<MediaEntity>
+
     @Insert
     suspend fun insert(media: MediaEntity): Long
 
     @Delete
     suspend fun delete(media: MediaEntity): Int
 
-    @Insert
-    suspend fun insert(mediaChunk: List<MediaChunkEntity>): Array<Long>
+    @Delete
+    suspend fun delete(media: Array<MediaEntity>): Int
 
     @Transaction
-    suspend fun insertMediaAndChunks(media: MediaEntity, chunks: List<MediaChunkEntity>): Long {
-        val mediaId = insert(media)
-        insert(chunks.map { it.copy(mediaId = mediaId) })
+    @Update
+    suspend fun update(media: List<MediaEntity>)
 
-        return mediaId
-    }
-
-    @Query("SELECT data FROM media_chunk WHERE media_id = :mediaId")
-    suspend fun getDataChunkByMediaId(mediaId: Long): Array<ByteArray>
 }

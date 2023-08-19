@@ -16,7 +16,6 @@
 
 package pro.fateev.diary.feature.diary.data.room
 
-import androidx.room.AutoMigration
 import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
@@ -25,12 +24,9 @@ import androidx.room.TypeConverters
     entities = [
         DiaryEntryEntity::class,
         MediaEntity::class,
-        MediaChunkEntity::class
     ],
-    autoMigrations = [
-        AutoMigration(from = 1, to = 2)
-    ],
-    version = 2
+    autoMigrations = [],
+    version = 1
 )
 @TypeConverters(Converters::class)
 abstract class AppDatabase : RoomDatabase() {

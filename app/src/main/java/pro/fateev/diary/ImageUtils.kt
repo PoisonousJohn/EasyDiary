@@ -23,10 +23,10 @@ import android.graphics.Matrix
 import android.net.Uri
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.painter.BitmapPainter
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.exifinterface.media.ExifInterface
 import java.io.ByteArrayOutputStream
-import kotlin.math.ceil
-import kotlin.math.min
+import java.io.File
 
 
 object ImageUtils {
@@ -89,28 +89,5 @@ object ImageUtils {
             ?: error("Failed to decode bitmap")
     }
 
-    fun sliceInChunks(byteArray: ByteArray, chunkSizeBytes: Int): List<ByteArray> {
-        val chunks = ceil(byteArray.size.toDouble() / chunkSizeBytes).toInt()
-        val result = mutableListOf<ByteArray>()
-        for (chunkIdx in 0 until chunks) {
-            val offset = chunkIdx * chunkSizeBytes
-            val bytesToCopy = min(chunkSizeBytes, byteArray.size - offset)
-            val chunkData = ByteArray(bytesToCopy)
-            byteArray.copyInto(chunkData, 0, offset, offset + bytesToCopy)
-            result.add(chunkData)
-        }
-
-        return result
-    }
-
-    fun joinChunks(dataChunks: Array<ByteArray>) : ByteArray {
-        val size = dataChunks.sumOf { it.size }
-        val data = ByteArray(size)
-        var offset = 0
-        for (chunk in dataChunks) {
-            chunk.copyInto(data, offset, 0, chunk.size)
-            offset += chunk.size
-        }
-        return data
-    }
+    fun String.readImage(): Painter = File(this).readBytes().toPainter()
 }

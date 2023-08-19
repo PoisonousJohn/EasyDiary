@@ -23,4 +23,12 @@ interface MediaRepository {
     suspend fun removeMedia(diaryEntryId: Long, index: Int)
     suspend fun getMediaByDiaryEntryId(diaryEntryId: Long): List<Media>
     suspend fun getMediaByMediaId(mediaId: Long): Media
+    suspend fun attachToDiaryEntry(media: List<Media>, diaryEntryId: Long)
+
+    suspend fun removeDraftMedia()
+
+    /**
+     * @return media that is not attached to any entry
+     */
+    suspend fun saveDraftFile(data: ByteArray): Media
 }

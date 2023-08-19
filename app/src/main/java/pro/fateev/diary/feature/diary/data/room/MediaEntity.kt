@@ -28,26 +28,12 @@ data class MediaEntity(
     @ColumnInfo(name = "mime_type")
     val mimeType: String,
 
+    /**
+     * id is null unless the media is attached to entry
+     */
     @ColumnInfo(name = "diary_entry_id")
-    val diaryEntryId: Long,
-) {
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (javaClass != other?.javaClass) return false
+    val diaryEntryId: Long?,
 
-        other as MediaEntity
-
-        if (id != other.id) return false
-        if (mimeType != other.mimeType) return false
-        if (diaryEntryId != other.diaryEntryId) return false
-
-        return true
-    }
-
-    override fun hashCode(): Int {
-        var result = id?.hashCode() ?: 0
-        result = 31 * result + mimeType.hashCode()
-        result = 31 * result + diaryEntryId.hashCode()
-        return result
-    }
-}
+    @ColumnInfo(name = "pathToFile")
+    val pathToFile: String,
+)
