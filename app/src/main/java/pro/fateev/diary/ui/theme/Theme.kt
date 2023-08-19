@@ -29,6 +29,9 @@ import androidx.compose.ui.graphics.Color
 
 val Colors.text
     get() = if (isLight) AlmostBlack else AlmostWhite
+@Suppress("UnusedReceiverParameter")
+val Colors.destructive
+    get() = Terracotta
 
 private val DarkColorPalette = darkColors(
     primary = Purple200,

@@ -22,7 +22,6 @@ import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -37,7 +36,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
@@ -55,20 +53,20 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.painter.Painter
-import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import coil.request.ImageRequest
 import pro.fateev.R
-import pro.fateev.diary.ImageUtils.readImage
 import pro.fateev.diary.extensions.DateExtensions.showDatePicker
 import pro.fateev.diary.extensions.FormattingExtensions.formatShort
+import pro.fateev.diary.feature.diary.ui.components.ImageThumbnailCard
 import pro.fateev.diary.ui.theme.AppTheme
+import pro.fateev.diary.ui.theme.destructive
 import pro.fateev.diary.ui.theme.text
 import java.util.Date
 
@@ -82,7 +80,7 @@ fun DiaryEntryScreen(vm: DiaryEntryViewModel) {
         onSave = vm::onSave,
         date = state.date,
         images = state.media.map { m ->
-            m.pathToFile.readImage()
+            ImageRequest.Builder(LocalContext.current).data(m.pathToFile)
         },
         onChangeDate = vm::onChangeDate,
         onAttachFile = vm::onAttachMedia,
@@ -95,7 +93,7 @@ fun DiaryEntryScreen(vm: DiaryEntryViewModel) {
 fun DiaryEntryScreenContent(
     date: Date = Date(),
     text: String = "",
-    images: List<Painter> = emptyList(),
+    images: List<ImageRequest.Builder> = emptyList(),
     onTextChanged: (String) -> Unit = {},
     onSave: () -> Unit = {},
     onChangeDate: (Date) -> Unit = {},
@@ -125,12 +123,16 @@ fun DiaryEntryScreenContent(
                 value = text,
                 onValueChange = onTextChanged,
                 textStyle = MaterialTheme.typography.body1.copy(color = MaterialTheme.colors.text),
+                cursorBrush = SolidColor(MaterialTheme.colors.onSurface),
                 decorationBox = { innerTextField ->
-                    Box(
+                    Column(
                         modifier = Modifier
                             .background(MaterialTheme.colors.surface)
-                            .padding(horizontal = 12.dp)
-                    ) { innerTextField() }
+                            .clipToBounds()
+                    ) {
+                        Box(modifier = Modifier.size(8.dp))
+                        innerTextField()
+                    }
                 },
                 modifier = Modifier
                     .weight(1f)
@@ -168,13 +170,12 @@ private fun ToolsPanel(onAttachFile: (Uri?) -> Unit) {
 
 @Composable
 private fun AttachedMedia(
-    images: List<Painter>,
+    images: List<ImageRequest.Builder>,
     onImageClick: (index: Int) -> Unit,
     onDelete: (index: Int) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val roundingDp = 12.dp
-    val shape = RoundedCornerShape(roundingDp)
     LazyRow(
         modifier = modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.spacedBy(roundingDp, alignment = Alignment.Start),
@@ -183,15 +184,11 @@ private fun AttachedMedia(
             val img = images[it]
             Box(modifier = Modifier.padding(roundingDp), contentAlignment = Alignment.TopEnd)
             {
-                Image(
-                    contentScale = ContentScale.Crop,
-                    painter = img,
-                    contentDescription = "",
-                    modifier = Modifier
-                        .clickable { onImageClick.invoke(it) }
-                        .size(100.dp)
-                        .clip(shape)
-                        .shadow(8.dp, shape)
+                val size = 100.dp
+                ImageThumbnailCard(
+                    size = size,
+                    data = img.size(with(LocalDensity.current) { size.roundToPx() }).build(),
+                    modifier = Modifier.clickable { onImageClick.invoke(it) }
                 )
                 IconButton(
                     onClick = { onDelete(it) }, modifier = Modifier
@@ -201,7 +198,7 @@ private fun AttachedMedia(
                     Icon(
                         imageVector = Icons.Filled.Delete,
                         contentDescription = "Delete",
-                        tint = MaterialTheme.colors.onError
+                        tint = MaterialTheme.colors.destructive
                     )
                 }
             }
@@ -230,7 +227,7 @@ private fun AppBar(
                 imageVector = Icons.Outlined.CalendarMonth,
                 contentDescription = "icon"
             )
-            Text(text = date.formatShort(LocalContext.current))
+            Text(text = date.formatShort(LocalContext.current), color = MaterialTheme.colors.onPrimary)
             Icon(
                 imageVector = Icons.Outlined.ArrowDropDown,
                 contentDescription = "icon"
@@ -255,22 +252,22 @@ private fun AppBar(
 @Preview
 fun DiaryEntryScreenPreviewLight() {
     AppTheme(darkTheme = false) {
+        val img = testImg()
         DiaryEntryScreenContent(
             text = "test",
             date = Date(),
-            images = listOf(
-                painterResource(id = R.drawable.ic_launcher_background),
-                painterResource(id = R.drawable.ic_launcher_background),
-                painterResource(id = R.drawable.ic_launcher_background),
-                painterResource(id = R.drawable.ic_launcher_background),
-                painterResource(id = R.drawable.ic_launcher_background),
-            ),
+            images = listOf(img, img, img, img),
             onSave = {},
             onTextChanged = {},
             onChangeDate = {},
             onAttachFile = {})
     }
 }
+
+@Composable
+fun testImg(): ImageRequest.Builder =
+    ImageRequest.Builder(LocalContext.current)
+        .data(R.drawable.ic_launcher_background)
 
 @Composable
 @Preview
@@ -280,9 +277,7 @@ fun DiaryEntryScreenPreviewDark() {
             text = "test",
             date = Date(),
             onSave = {},
-            images = listOf(
-                painterResource(id = R.drawable.ic_launcher_background),
-            ),
+            images = listOf(testImg()),
             onTextChanged = {},
             onChangeDate = {},
             onAttachFile = {})

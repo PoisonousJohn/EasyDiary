@@ -23,24 +23,17 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 
 @Composable
-fun ImageThumbnailCard(size: Dp, path: String, modifier: Modifier) {
+fun ImageThumbnailCard(size: Dp, data: ImageRequest, modifier: Modifier) {
     val shape = RoundedCornerShape(12.dp)
     Card(elevation = 12.dp, shape = shape) {
-        val imageRequest = ImageRequest.Builder(LocalContext.current)
-            .size(with(LocalDensity.current) { size.roundToPx() })
-            .data(path)
-            .crossfade(true)
-            .build()
         AsyncImage(
-            model = imageRequest,
+            model = data,
             contentScale = ContentScale.Crop,
             modifier = modifier
                 .requiredSize(size)

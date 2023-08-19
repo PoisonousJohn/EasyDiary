@@ -21,12 +21,11 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Matrix
 import android.net.Uri
-import androidx.compose.ui.graphics.asImageBitmap
-import androidx.compose.ui.graphics.painter.BitmapPainter
-import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.platform.LocalContext
 import androidx.exifinterface.media.ExifInterface
+import coil.request.ImageRequest
 import java.io.ByteArrayOutputStream
-import java.io.File
 
 
 object ImageUtils {
@@ -65,9 +64,6 @@ object ImageUtils {
         }
     }
 
-    fun ByteArray.toPainter(): BitmapPainter =
-        toBitmap().asImageBitmap().let(::BitmapPainter)
-
     fun Bitmap.toPNGByteArray(): ByteArray {
         val stream = ByteArrayOutputStream()
         if (!compress(Bitmap.CompressFormat.JPEG, 90, stream))
@@ -89,5 +85,7 @@ object ImageUtils {
             ?: error("Failed to decode bitmap")
     }
 
-    fun String.readImage(): Painter = File(this).readBytes().toPainter()
+    @Composable
+    fun String.pathToImageRequest() : ImageRequest.Builder =
+        ImageRequest.Builder(LocalContext.current).data(this)
 }

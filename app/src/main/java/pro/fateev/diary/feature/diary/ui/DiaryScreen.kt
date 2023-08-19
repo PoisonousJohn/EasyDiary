@@ -45,6 +45,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import pro.fateev.diary.ImageUtils.pathToImageRequest
 import pro.fateev.diary.extensions.FormattingExtensions.formatShort
 import pro.fateev.diary.feature.diary.domain.model.DiaryEntry
 import pro.fateev.diary.feature.diary.domain.model.Media
@@ -74,7 +75,8 @@ fun DiaryEntryCard(entry: DiaryEntry, onImageClick: (Int) -> Unit = {}) = Card(
                 items(entry.media.size) { mediaIndex ->
                     val m = entry.media[mediaIndex]
                     ImageThumbnailCard(
-                        size = size, path = m.pathToFile,
+                        size = size,
+                        data = m.pathToFile.pathToImageRequest().build(),
                         modifier = Modifier
                             .weight(1f)
                             .clickable { onImageClick.invoke(mediaIndex) },
