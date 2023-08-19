@@ -32,8 +32,8 @@ class ImagePreviewViewModel @Inject constructor(
 
     private val mediaId = savedState.get<Long>("id") ?: error("id is required")
 
-    val image: Flow<ByteArray>
+    val image: Flow<String>
         get() = flow {
-            emit(_repo.getMediaByMediaId(mediaId).data)
+            emit(_repo.getMediaByMediaId(mediaId).pathToFile)
         }
 }

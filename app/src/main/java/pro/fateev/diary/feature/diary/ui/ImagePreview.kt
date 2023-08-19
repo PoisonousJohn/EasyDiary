@@ -16,44 +16,48 @@
 
 package pro.fateev.diary.feature.diary.ui
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.painter.Painter
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
+import coil.compose.SubcomposeAsyncImage
+import coil.request.ImageRequest
 import net.engawapg.lib.zoomable.rememberZoomState
 import net.engawapg.lib.zoomable.zoomable
 import pro.fateev.R
-import pro.fateev.diary.ImageUtils.toPainter
 
 @Composable
 fun ImagePreview(vm: ImagePreviewViewModel) {
-    val data = vm.image.collectAsState(null).value ?: return
-    ImagePreview(image = data.toPainter())
+    val path = vm.image.collectAsState(null).value ?: return
+    val model = ImageRequest.Builder(LocalContext.current).data(path).build()
+    ImagePreview(model)
 }
 
 @Composable
-fun ImagePreview(image: Painter) {
-    val zoomState = rememberZoomState(contentSize = image.intrinsicSize)
+fun ImagePreview(model: ImageRequest) {
+    val zoomState = rememberZoomState()
     Box(
         modifier = Modifier
             .fillMaxSize()
             .zoomable(zoomState)
     ) {
-        Image(
+        SubcomposeAsyncImage(
+            model = model,
             modifier = Modifier.fillMaxSize(),
-            painter = image, contentDescription = ""
+            contentDescription = "",
+            loading = { CircularProgressIndicator() }
         )
-
     }
 }
 
 @Preview
 @Composable
-fun ImagePreviewPreview() {
-    ImagePreview(image = painterResource(id = R.drawable.ic_launcher_background))
+fun ImagePreview() {
+    val model =
+        ImageRequest.Builder(LocalContext.current).data(R.drawable.ic_launcher_background).build()
+    ImagePreview(model)
 }
