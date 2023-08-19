@@ -22,11 +22,14 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import pro.fateev.diary.ImageUtils.toEXIFAwareImageBytes
 import pro.fateev.diary.extensions.FlowExtensions.mutableStateIn
 import pro.fateev.diary.feature.diary.domain.DiaryRepository
@@ -51,6 +54,8 @@ class DiaryEntryViewModel @Inject constructor(
     private val _contentResolver = context.contentResolver
     private val _mediaBuffer = mutableListOf<Media>()
 
+    private val ioScope = CoroutineScope(Dispatchers.IO)
+
     private val _diaryEntry: MutableStateFlow<DiaryEntry> =
         (if (_entryId == -1L || _entryId == null) flowOf(DiaryEntry())
         else _diaryRepo.getDiaryEntry(_entryId))
@@ -65,9 +70,7 @@ class DiaryEntryViewModel @Inject constructor(
         get() = _diaryEntry
 
     fun onChangeDate(date: Date) {
-        viewModelScope.launch {
-            _diaryEntry.emit(_diaryEntry.value.copy(date = date))
-        }
+        updateEntry { it.copy(date = date) }
     }
 
     fun onTextChanged(text: String) {
@@ -76,7 +79,8 @@ class DiaryEntryViewModel @Inject constructor(
 
     fun onSave() {
         viewModelScope.launch {
-            _diaryRepo.saveDiaryEntry(_diaryEntry.value)
+            val id = _diaryRepo.saveDiaryEntry(_diaryEntry.value).id
+            _mediaRepo.attachToDiaryEntry(_mediaBuffer, id)
             pop()
         }
     }
@@ -85,14 +89,13 @@ class DiaryEntryViewModel @Inject constructor(
         if (uri == null) return
 
         viewModelScope.launch {
-            val bytes = uri.toEXIFAwareImageBytes(_contentResolver)
-            _mediaBuffer.add(Media(data = bytes))
-            val savedEntry = _diaryRepo.saveDiaryEntry(getDataToSave())
-            // actualize media id
-            _mediaBuffer.clear()
-            _mediaBuffer.addAll(savedEntry.media)
-
-            _diaryEntry.emit(savedEntry)
+            var bytes: ByteArray
+            withContext(ioScope.coroutineContext) {
+                 bytes = uri.toEXIFAwareImageBytes(_contentResolver)
+            }
+            val draftMedia = _mediaRepo.saveDraftFile(bytes)
+            _mediaBuffer.add(draftMedia)
+            updateMedia()
         }
     }
 
@@ -107,10 +110,26 @@ class DiaryEntryViewModel @Inject constructor(
         _mediaBuffer.removeAt(index)
         viewModelScope.launch {
             _mediaRepo.removeMedia(_diaryEntry.value.id, index)
-            _diaryEntry.emit(_diaryEntry.value.copy(media = _mediaBuffer.toList()))
+            updateMedia()
         }
     }
 
-    private fun getDataToSave() =
-        _diaryEntry.value.copy(media = _mediaBuffer.toList())
+    fun onBack() {
+        _mediaBuffer.clear()
+        updateMedia()
+        ioScope.launch {
+            _mediaRepo.removeDraftMedia()
+        }
+        pop()
+    }
+
+    private fun updateMedia() {
+        updateEntry { it.copy(media = _mediaBuffer.toList()) }
+    }
+
+    private fun updateEntry(updateBlock: (DiaryEntry) -> DiaryEntry) {
+        viewModelScope.launch {
+            _diaryEntry.emit(updateBlock.invoke(_diaryEntry.value))
+        }
+    }
 }

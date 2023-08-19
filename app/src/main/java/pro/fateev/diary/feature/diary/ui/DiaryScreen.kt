@@ -21,10 +21,10 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.requiredSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -42,17 +42,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import coil.compose.AsyncImage
-import coil.request.ImageRequest
 import pro.fateev.diary.extensions.FormattingExtensions.formatShort
 import pro.fateev.diary.feature.diary.domain.model.DiaryEntry
 import pro.fateev.diary.feature.diary.domain.model.Media
+import pro.fateev.diary.feature.diary.ui.components.ImageThumbnailCard
 import pro.fateev.diary.ui.theme.body2Secondary
 import java.util.Date
 
@@ -64,32 +60,24 @@ fun DiaryEntryCard(entry: DiaryEntry, onImageClick: (Int) -> Unit = {}) = Card(
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(8.dp)
     ) {
-        EntryHeader(date = entry.date)
+        val contentPadding = 8.dp
+        EntryHeader(date = entry.date, modifier = Modifier.padding(vertical = contentPadding))
         if (entry.media.isNotEmpty()) {
             val spacing = 12.dp
             LazyRow(
-                modifier = Modifier.padding(vertical = 8.dp),
-                horizontalArrangement = Arrangement.spacedBy(spacing)
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(spacing),
+                contentPadding = PaddingValues(horizontal = contentPadding)
             ) {
+                val size = 150.dp
                 items(entry.media.size) { mediaIndex ->
                     val m = entry.media[mediaIndex]
-                    val shape = RoundedCornerShape(spacing)
-                    val imageRequest = ImageRequest.Builder(LocalContext.current)
-                        .data(m.data)
-                        .crossfade(true)
-                        .build()
-                    AsyncImage(
-                        model = imageRequest,
-                        contentScale = ContentScale.Crop,
+                    ImageThumbnailCard(
+                        size = size, path = m.pathToFile,
                         modifier = Modifier
-                            .requiredSize(150.dp)
-                            .clip(shape)
-                            .shadow(4.dp, shape)
                             .weight(1f)
                             .clickable { onImageClick.invoke(mediaIndex) },
-                        contentDescription = ""
                     )
                 }
             }
@@ -98,6 +86,7 @@ fun DiaryEntryCard(entry: DiaryEntry, onImageClick: (Int) -> Unit = {}) = Card(
             text = entry.text,
             style = MaterialTheme.typography.body1,
             modifier = Modifier
+                .padding(contentPadding)
                 .fillMaxWidth()
         )
     }
@@ -154,9 +143,9 @@ fun DiaryScreenContent(
 }
 
 @Composable
-fun ColumnScope.EntryHeader(date: Date) {
+fun ColumnScope.EntryHeader(date: Date, modifier: Modifier) {
     Row(
-        modifier = Modifier.align(Alignment.CenterHorizontally)
+        modifier = modifier.align(Alignment.CenterHorizontally)
     ) {
         Icon(
             imageVector = Icons.Rounded.DateRange,

@@ -18,6 +18,7 @@ package pro.fateev.diary.feature.diary.ui.entry
 
 import android.content.Context
 import android.net.Uri
+import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
@@ -57,8 +58,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.asImageBitmap
-import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -66,7 +65,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import pro.fateev.R
-import pro.fateev.diary.ImageUtils.toBitmap
+import pro.fateev.diary.ImageUtils.readImage
 import pro.fateev.diary.extensions.DateExtensions.showDatePicker
 import pro.fateev.diary.extensions.FormattingExtensions.formatShort
 import pro.fateev.diary.ui.theme.AppTheme
@@ -76,13 +75,14 @@ import java.util.Date
 @Composable
 fun DiaryEntryScreen(vm: DiaryEntryViewModel) {
     val state = vm.data.collectAsState().value
+    BackHandler(true, vm::onBack)
     DiaryEntryScreenContent(
         text = state.text,
         onTextChanged = vm::onTextChanged,
         onSave = vm::onSave,
         date = state.date,
         images = state.media.map { m ->
-            m.data.toBitmap().asImageBitmap().let { BitmapPainter(it) }
+            m.pathToFile.readImage()
         },
         onChangeDate = vm::onChangeDate,
         onAttachFile = vm::onAttachMedia,
