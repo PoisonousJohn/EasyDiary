@@ -33,6 +33,9 @@ val Colors.text
 val Colors.destructive
     get() = Terracotta
 
+val Colors.neutralBackground
+    get() = if (isLight) NeutralBackgroundGrayLight else NeutralBackgroundGrayDark
+
 private val DarkColorPalette = darkColors(
     primary = Purple200,
     primaryVariant = Purple700,
