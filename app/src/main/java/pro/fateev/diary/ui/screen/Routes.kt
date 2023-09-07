@@ -37,10 +37,5 @@ object Routes {
         ))
     )
 
-    object Dashboard : ScreenRoute(
-        routeDefinition = Definition("dashboard", argumentKeys = listOf(
-            "username" to { type = NavType.StringType; optional = false }
-        ))
-    )
-
+    object PIN : ScreenRoute(routeDefinition = Definition("pin"))
 }
