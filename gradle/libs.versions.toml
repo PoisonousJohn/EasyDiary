@@ -12,6 +12,8 @@ room = "2.5.1"
 exifInteface = "1.3.6"
 zoomable = "1.5.0"
 coil = "2.4.0"
+securityCrypto = "1.0.0"
+desugaring = "2.0.3"
 
 [libraries]
 bom-compose = { group = "androidx.compose", name = "compose-bom", version.ref = "bomCompose" }
@@ -46,6 +48,8 @@ room-paging = { module = "androidx.room:room-paging", version.ref = "room" }
 exif = { module = "androidx.exifinterface:exifinterface", version.ref = "exifInteface" }
 zoomable = { module = "net.engawapg.lib:zoomable", version.ref = "zoomable" }
 coil = { module = "io.coil-kt:coil-compose", version.ref = "coil"}
+security-crypto = { module = "androidx.security:security-crypto", version.ref = "securityCrypto"}
+desugaring = {module = "com.android.tools:desugar_jdk_libs", version.ref = "desugaring" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "androidGradlePlugin" }

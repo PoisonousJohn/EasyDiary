@@ -19,18 +19,25 @@
 package pro.fateev.diary.di.module
 
 import android.content.Context
+import android.content.SharedPreferences
 import androidx.room.Room
+import androidx.security.crypto.EncryptedSharedPreferences
+import androidx.security.crypto.MasterKeys
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import pro.fateev.diary.feature.auth.data.AuthRepositoryImpl
+import pro.fateev.diary.feature.auth.domain.AuthRepository
 import pro.fateev.diary.feature.diary.data.DiaryRepositoryImpl
 import pro.fateev.diary.feature.diary.data.MediaRepositoryImpl
 import pro.fateev.diary.feature.diary.data.room.AppDatabase
 import pro.fateev.diary.feature.diary.domain.DiaryRepository
 import pro.fateev.diary.feature.diary.domain.MediaRepository
+import pro.fateev.diary.feature.pin.data.PINRepositoryImpl
+import pro.fateev.diary.feature.pin.domain.PINRepository
 import javax.inject.Singleton
 
 @InstallIn(SingletonComponent::class)
@@ -43,6 +50,14 @@ abstract class DiaryModule {
     @Binds
     abstract fun provideMediaRepo(repo: MediaRepositoryImpl): MediaRepository
 
+    @Singleton
+    @Binds
+    abstract fun providePINRepo(repo: PINRepositoryImpl): PINRepository
+
+    @Singleton
+    @Binds
+    abstract fun provideAuthRepo(repo: AuthRepositoryImpl): AuthRepository
+
     companion object {
         @Singleton
         @Provides
@@ -51,6 +66,19 @@ abstract class DiaryModule {
                 context,
                 AppDatabase::class.java, "diary"
             ).build()
+
+        @Singleton
+        @Provides
+        fun provideSharedPrefs(@ApplicationContext context: Context) : SharedPreferences {
+            val masterKeyAlias = MasterKeys.getOrCreate(MasterKeys.AES256_GCM_SPEC)
+            return EncryptedSharedPreferences.create(
+                "secret_shared_prefs",
+                masterKeyAlias,
+                context,
+                EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
+                EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
+            )
+        }
     }
 
 }
