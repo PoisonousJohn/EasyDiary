@@ -104,6 +104,15 @@ fun PINScreenPreviewDarkError() {
 }
 
 @Composable
+fun PINScreen(vm: PINScreenViewModel) {
+    PINScreen(
+        pinLength = vm.pinLength,
+        onNumberClicked = vm::onEnterNumber,
+        onBackspaceClicked = vm::onBackspace
+    )
+}
+
+@Composable
 fun PINScreen(
     title: String = "Enter PIN",
     onNumberClicked: (Int) -> Unit = {},
@@ -157,7 +166,12 @@ fun PINScreen(
                 val isNumberKey = it <= 9
                 val alignment: Alignment =
                     if (isZeroButton(it)) Alignment.CenterEnd else Alignment.Center
-                Box(contentAlignment = alignment, modifier = Modifier.fillMaxSize().padding(vertical = 4.dp)) {
+                Box(
+                    contentAlignment = alignment,
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(vertical = 4.dp)
+                ) {
                     if (isNumberKey) {
                         Button(
                             onClick = { onNumberClicked.invoke(it + 1) },
@@ -165,7 +179,10 @@ fun PINScreen(
                             modifier = Modifier.size(buttonSize),
                             colors = ButtonDefaults.buttonColors(backgroundColor = MaterialTheme.colors.neutralBackground)
                         ) {
-                            Text(text = "${(it + 1) % 10}", style = MaterialTheme.typography.body1)
+                            Text(
+                                text = "${(it + 1) % 10}",
+                                style = MaterialTheme.typography.body1
+                            )
                         }
                     } else {
                         IconButton(
