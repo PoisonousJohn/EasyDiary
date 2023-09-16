@@ -19,6 +19,7 @@ package pro.fateev.diary
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.viewModels
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.navigation.compose.rememberNavController
@@ -27,8 +28,11 @@ import pro.fateev.diary.feature.diary.ui.DiaryScreen
 import pro.fateev.diary.feature.diary.ui.DiaryScreenViewModel
 import pro.fateev.diary.feature.diary.ui.ImagePreview
 import pro.fateev.diary.feature.diary.ui.ImagePreviewViewModel
+import pro.fateev.diary.feature.diary.ui.MainScreenViewModel
 import pro.fateev.diary.feature.diary.ui.PINScreen
 import pro.fateev.diary.feature.diary.ui.PINScreenViewModel
+import pro.fateev.diary.feature.diary.ui.SetPINQuestionViewModel
+import pro.fateev.diary.feature.diary.ui.YesNoScreen
 import pro.fateev.diary.feature.diary.ui.entry.DiaryEntryScreen
 import pro.fateev.diary.feature.diary.ui.entry.DiaryEntryViewModel
 import pro.fateev.diary.navigation.NavigationComponent
@@ -43,11 +47,14 @@ class MainActivity : ComponentActivity() {
 
     private lateinit var controller: NavigationController
 
+    private val vm: MainScreenViewModel by viewModels()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
             val navHostState = rememberNavController()
             controller = NavigationControllerImpl(navHostState)
+            vm.setNavigationController(controller)
             AppTheme {
                 Surface(color = MaterialTheme.colors.background) {
                     NavigationComponent(
@@ -76,14 +83,33 @@ class MainActivity : ComponentActivity() {
                         }
 
                         composable<PINScreenViewModel>(
-                            route = Routes.PIN,
+                            route = Routes.PIN(),
                             navigationController = controller
                         ) { _, vm ->
                             PINScreen(vm)
                         }
+
+                        composable<SetPINQuestionViewModel>(
+                            route = Routes.SetPINQuestion,
+                            navigationController = controller
+                        ) { _, vm ->
+                            YesNoScreen(
+                                title = "Set PIN?",
+                                description = "To secure the diary you may set a PIN",
+                                onPositive = vm::onAgree,
+                                onNegative = vm::onDisagree
+                            )
+                        }
                     }
                 }
             }
+
+            vm.onReturnToApp()
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        vm.onReturnToApp()
     }
 }
