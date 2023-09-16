@@ -17,6 +17,7 @@
 package pro.fateev.diary.ui.screen
 
 import androidx.navigation.NavType
+import pro.fateev.diary.feature.diary.ui.PINScreenViewModel
 import pro.fateev.diary.navigation.routing.ScreenRoute
 
 object Routes {
@@ -37,5 +38,17 @@ object Routes {
         ))
     )
 
-    object PIN : ScreenRoute(routeDefinition = Definition("pin"))
+    class PIN : ScreenRoute(
+        routeDefinition = Definition(
+            "pin", argumentKeys = listOf(
+                modeKey to { type = NavType.EnumType(PINScreenViewModel.Mode::class.java) }
+            )
+        )
+    ) {
+        companion object {
+            const val modeKey = "mode"
+        }
+    }
+
+    object SetPINQuestion : ScreenRoute(routeDefinition = Definition("set-pin-question"))
 }
