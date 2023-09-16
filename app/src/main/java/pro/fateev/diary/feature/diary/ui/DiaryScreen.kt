@@ -16,6 +16,8 @@
 
 package pro.fateev.diary.feature.diary.ui
 
+import android.content.res.Configuration.UI_MODE_NIGHT_NO
+import android.content.res.Configuration.UI_MODE_NIGHT_YES
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -50,6 +52,7 @@ import pro.fateev.diary.extensions.FormattingExtensions.formatShort
 import pro.fateev.diary.feature.diary.domain.model.DiaryEntry
 import pro.fateev.diary.feature.diary.domain.model.Media
 import pro.fateev.diary.feature.diary.ui.components.ImageThumbnailCard
+import pro.fateev.diary.ui.theme.AppTheme
 import pro.fateev.diary.ui.theme.body2Secondary
 import java.util.Date
 
@@ -164,13 +167,16 @@ fun ColumnScope.EntryHeader(date: Date, modifier: Modifier) {
 }
 
 @Composable
-@Preview
+@Preview(uiMode = UI_MODE_NIGHT_NO)
+@Preview(uiMode = UI_MODE_NIGHT_YES)
 fun DiaryScreenPreview() {
-    DiaryScreenContent(
-        entries = listOf(
-            DiaryEntry(id = 1, date = Date(), text = "One line\ntwo line\nthree line"),
-            DiaryEntry(id = 1, date = Date(), text = "One line\ntwo line\nthree line"),
-            DiaryEntry(id = 1, date = Date(), text = "One line\ntwo line\nthree line"),
+    AppTheme {
+        DiaryScreenContent(
+            entries = listOf(
+                DiaryEntry(id = 1, date = Date(), text = "One line\ntwo line\nthree line"),
+                DiaryEntry(id = 1, date = Date(), text = "One line\ntwo line\nthree line"),
+                DiaryEntry(id = 1, date = Date(), text = "One line\ntwo line\nthree line"),
+            )
         )
-    )
+    }
 }
