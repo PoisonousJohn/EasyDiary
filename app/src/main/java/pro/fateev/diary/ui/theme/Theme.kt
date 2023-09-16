@@ -18,13 +18,10 @@ package pro.fateev.diary.ui.theme
 
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material.Colors
-import androidx.compose.material.LocalContentColor
-import androidx.compose.material.LocalTextStyle
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.darkColors
 import androidx.compose.material.lightColors
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.graphics.Color
 
 val Colors.text
@@ -42,6 +39,9 @@ private val DarkColorPalette = darkColors(
     secondary = Teal200,
     onError = Color.Red,
     background = BackgroundDark,
+    onPrimary = AlmostWhite,
+    onBackground = AlmostWhite,
+    onSurface = AlmostWhite
 )
 
 private val LightColorPalette = lightColors(
@@ -50,15 +50,7 @@ private val LightColorPalette = lightColors(
     secondary = Teal200,
     onError = Color.Red,
     background = BackgroundLight,
-
-    /* Other default colors to override
-    background = Color.White,
-    surface = Color.White,
-    onPrimary = Color.White,
-    onSecondary = Color.Black,
-    onBackground = Color.Black,
-    onSurface = Color.Black,
-    */
+    onPrimary = AlmostWhite
 )
 
 @Composable
@@ -76,13 +68,6 @@ fun AppTheme(
         colors = colors,
         typography = Typography,
         shapes = Shapes,
-        content = {
-            CompositionLocalProvider(
-                LocalContentColor provides colors.text,
-                LocalTextStyle provides LocalTextStyle.current.copy(color = colors.text)
-            ) {
-                content()
-            }
-        }
+        content = content
     )
 }
