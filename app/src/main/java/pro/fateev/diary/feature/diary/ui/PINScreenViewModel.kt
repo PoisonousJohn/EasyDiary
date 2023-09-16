@@ -16,53 +16,106 @@
 
 package pro.fateev.diary.feature.diary.ui
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
-import pro.fateev.diary.feature.pin.domain.PINRepository
+import pro.fateev.diary.feature.auth.domain.AuthInteractor
+import pro.fateev.diary.ui.screen.Routes
 import pro.fateev.diary.ui.screen.common.BaseViewModel
 import javax.inject.Inject
 
+@HiltViewModel
 class PINScreenViewModel @Inject constructor(
-    private val _pinRepo: PINRepository
+    private val _authInteractor: AuthInteractor,
+    savedState: SavedStateHandle,
 ) : BaseViewModel() {
 
+    private var _savedPIN = ""
     private var _pin = ""
     private var _mutablePINFlow = MutableStateFlow<PINStatus>(PINStatus.Filled(0))
+    private var _modeFlow = MutableStateFlow(
+        savedState.get<Mode>(Routes.PIN.modeKey) ?: error("mode is missing")
+    )
 
     val pinStatus: Flow<PINStatus> = _mutablePINFlow
-    val pinLength = _pinRepo.getPINLength()
+    val pinLength = _authInteractor.getPINLength()
+    val mode: Flow<Mode> = _modeFlow
 
     fun onBackspace() {
-        _pin = _pin.substring(0, _pin.length)
+        if (_pin.isBlank()) return
+        _pin = _pin.substring(0, _pin.length - 1)
         updateFilledState()
     }
 
     fun onEnterNumber(number: Int) {
         _pin += number
-        if (_pin.length == _pinRepo.getPINLength()) {
-            val isPinValid = _pinRepo.isPINValid(_pin)
-            _pin = ""
-            viewModelScope.launch {
-                if (isPinValid) {
-                    _mutablePINFlow.emit(PINStatus.Success)
-                } else {
-                    _mutablePINFlow.emit(PINStatus.Error)
-                }
-            }
+        updateFilledState()
+
+        if (_modeFlow.value == Mode.Auth && _pin.length == _authInteractor.getPINLength()) {
+            checkAuth()
             return
         }
 
+        checkPINSet()
     }
 
-    fun onPINConfirmed() {
+    private fun checkPINSet() {
+        if (_pin.length < _authInteractor.getPINLength()) return
+
+        if (_modeFlow.value == Mode.SetPIN) {
+            _savedPIN = _pin
+            _pin = ""
+            viewModelScope.launch {
+                _modeFlow.emit(Mode.RepeatPIN)
+            }
+            updateFilledState()
+            return
+        }
+
+        if (_savedPIN != _pin) {
+            onPINDoesNotMatchError()
+            return
+        }
+
+        _authInteractor.setPIN(_savedPIN)
         pop()
+    }
+
+    private fun onPINDoesNotMatchError() {
+        _savedPIN = ""
+        _pin = ""
+        viewModelScope.launch {
+            _modeFlow.emit(Mode.SetPIN)
+            _mutablePINFlow.emit(PINStatus.Error(PINError.PINDoesNotMatch))
+        }
+    }
+
+    private fun checkAuth() {
+        val isPinValid = _authInteractor.isPINValid(_pin)
+        _pin = ""
+        viewModelScope.launch {
+            if (isPinValid) {
+                _mutablePINFlow.emit(PINStatus.Success)
+                pop()
+            } else {
+                _mutablePINFlow.emit(PINStatus.Error(PINError.WrongPIN))
+            }
+        }
+        return
     }
 
     private fun updateFilledState() {
         viewModelScope.launch {
             _mutablePINFlow.emit(PINStatus.Filled(_pin.length))
         }
+    }
+
+    enum class Mode {
+        Auth,
+        SetPIN,
+        RepeatPIN
     }
 }
