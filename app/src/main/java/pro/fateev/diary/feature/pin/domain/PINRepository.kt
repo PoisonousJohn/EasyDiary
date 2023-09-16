@@ -19,6 +19,7 @@ package pro.fateev.diary.feature.pin.domain
 interface PINRepository {
     fun isPINSet(): Boolean
     fun isPINQuestionAsked(): Boolean
+    fun onPINQuestionAsked()
     fun setPIN(pin: String)
     fun isPINValid(pin: String): Boolean
     fun getPINLength(): Int

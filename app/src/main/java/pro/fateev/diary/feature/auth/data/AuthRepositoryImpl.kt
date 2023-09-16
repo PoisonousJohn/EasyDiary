@@ -26,8 +26,11 @@ import javax.inject.Inject
 
 class AuthRepositoryImpl @Inject constructor(private val sharedPreferences: SharedPreferences) :
     AuthRepository {
+
+    private var _firstAuth = true
+
     override fun isAuthExpired(): Boolean {
-        if (!sharedPreferences.contains(LastAuthTimestamp)) return true
+        if (_firstAuth || !sharedPreferences.contains(LastAuthTimestamp)) return true
 
         val lastAuth = sharedPreferences.getLong(LastAuthTimestamp, 0).toInstant()
         val now = Instant.now()
@@ -44,6 +47,7 @@ class AuthRepositoryImpl @Inject constructor(private val sharedPreferences: Shar
         sharedPreferences.edit().apply {
             val date = Calendar.getInstance().time.time
             putLong(LastAuthTimestamp, date)
+            _firstAuth = false
         }.apply()
 
     private companion object {

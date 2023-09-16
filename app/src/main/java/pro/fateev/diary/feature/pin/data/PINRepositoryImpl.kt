@@ -29,7 +29,12 @@ class PINRepositoryImpl @Inject constructor(private val sharedPrefs: SharedPrefe
 
     override fun setPIN(pin: String) = sharedPrefs.edit().apply {
         putString(PINKey, pin)
+        onPINQuestionAsked()
     }.apply()
+
+    override fun onPINQuestionAsked() {
+        sharedPrefs.edit().putBoolean(PINQuestionKey, true).apply()
+    }
 
     override fun isPINValid(pin: String): Boolean =
         isPINSet() && pin == sharedPrefs.getString(PINKey, null)
