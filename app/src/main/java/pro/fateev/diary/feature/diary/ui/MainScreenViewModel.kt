@@ -44,4 +44,8 @@ class MainScreenViewModel @Inject constructor(
             }
         }
     }
+
+    fun onLeaveApp() {
+        authInteractor.onLeaveApp()
+    }
 }

@@ -16,6 +16,11 @@
 
 package pro.fateev.diary.feature.auth.domain
 
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import pro.fateev.diary.feature.pin.domain.PINRepository
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -31,8 +36,19 @@ class AuthInteractor @Inject constructor(
     private val authRepo: AuthRepository,
     private val pinRepo: PINRepository
 ) {
-    fun isPINValid(pin: String) = pinRepo.isPINValid(pin)
+    private val ioScope = CoroutineScope(Dispatchers.IO)
+    private var extendAuthJob: Job? = null
+    fun checkIsPINValid(pin: String): Boolean {
+        val isValid = pinRepo.isPINValid(pin)
+        if (isValid) {
+            onSuccessfulAuth()
+        }
+        return isValid
+    }
     fun getPINLength() = pinRepo.getPINLength()
+    fun onLeaveApp() {
+        extendAuthJob?.cancel()
+    }
     fun onReturnToApp(): AuthCheckResult {
         if (pinRepo.isPINSet().not()) return AuthCheckResult.PINNotSet
 
@@ -47,6 +63,24 @@ class AuthInteractor @Inject constructor(
     fun onSetPINQuestionAsked() = pinRepo.onPINQuestionAsked()
     fun setPIN(pin: String) {
         pinRepo.setPIN(pin)
+        onSuccessfulAuth()
+    }
+
+    private fun onSuccessfulAuth() {
         authRepo.approveAuth()
+        if (extendAuthJob == null) {
+            extendAuthJob = ioScope.launch { extendAuthLoop() }
+        }
+    }
+
+    private suspend fun extendAuthLoop() {
+        while (true) {
+            delay(ExtendAuthLoopPeriodMs)
+            authRepo.tryExtendAuth()
+        }
+    }
+
+    companion object {
+        private const val ExtendAuthLoopPeriodMs = 5000L
     }
 }

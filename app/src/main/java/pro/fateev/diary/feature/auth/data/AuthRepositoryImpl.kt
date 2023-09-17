@@ -34,8 +34,8 @@ class AuthRepositoryImpl @Inject constructor(private val sharedPreferences: Shar
 
         val lastAuth = sharedPreferences.getLong(LastAuthTimestamp, 0).toInstant()
         val now = Instant.now()
-        val duration = Duration.between(lastAuth, now)
-        return duration.seconds <= AuthTimeoutSeconds
+        val duration = Duration.between(lastAuth, now).seconds
+        return duration > AuthTimeoutSeconds
     }
 
     override fun tryExtendAuth() {
@@ -52,6 +52,6 @@ class AuthRepositoryImpl @Inject constructor(private val sharedPreferences: Shar
 
     private companion object {
         const val LastAuthTimestamp = "last.auth.timestamp"
-        const val AuthTimeoutSeconds = 15
+        const val AuthTimeoutSeconds = 60
     }
 }

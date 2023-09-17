@@ -20,4 +20,5 @@ interface AuthRepository {
     fun isAuthExpired(): Boolean
     fun tryExtendAuth()
     fun approveAuth()
+
 }

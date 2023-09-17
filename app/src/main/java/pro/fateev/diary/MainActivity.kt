@@ -110,6 +110,13 @@ class MainActivity : ComponentActivity() {
 
     override fun onResume() {
         super.onResume()
+        // TODO: maybe move to lifecycle inside of VM?
         vm.onReturnToApp()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        // TODO: maybe move to lifecycle inside of VM?
+        vm.onLeaveApp()
     }
 }

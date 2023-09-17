@@ -94,7 +94,7 @@ class PINScreenViewModel @Inject constructor(
     }
 
     private fun checkAuth() {
-        val isPinValid = _authInteractor.isPINValid(_pin)
+        val isPinValid = _authInteractor.checkIsPINValid(_pin)
         _pin = ""
         viewModelScope.launch {
             if (isPinValid) {
