@@ -34,12 +34,15 @@ import androidx.compose.material.Card
 import androidx.compose.material.FabPosition
 import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
+import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.rounded.DateRange
+import androidx.compose.material.icons.rounded.Settings
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
@@ -104,7 +107,8 @@ fun DiaryScreen(vm: DiaryScreenViewModel) {
         entries,
         onAddEntry = vm::onAddEntry,
         onEditEntry = vm::onEditEntry,
-        onImageClick = vm::onImageClick
+        onImageClick = vm::onImageClick,
+        onSettingsClicked = vm::onSettingsClicked
     )
 }
 
@@ -113,7 +117,8 @@ fun DiaryScreenContent(
     entries: List<DiaryEntry>,
     onAddEntry: () -> Unit = {},
     onEditEntry: (DiaryEntry) -> Unit = {},
-    onImageClick: (Media) -> Unit = {}
+    onImageClick: (Media) -> Unit = {},
+    onSettingsClicked: () -> Unit = {}
 ) {
     Scaffold(
         floatingActionButton = {
@@ -126,6 +131,18 @@ fun DiaryScreenContent(
         },
         floatingActionButtonPosition = FabPosition.End,
         isFloatingActionButtonDocked = true,
+        topBar = {
+            TopAppBar(
+                title = {},
+                actions = {
+                    IconButton(onClick = onSettingsClicked) {
+                        Icon(
+                            imageVector = Icons.Rounded.Settings,
+                            contentDescription = "Settings"
+                        )
+                    }
+                })
+        },
         content = { padding ->
             LazyColumn(
                 modifier = Modifier

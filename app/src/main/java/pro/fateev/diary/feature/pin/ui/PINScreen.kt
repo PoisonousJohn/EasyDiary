@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package pro.fateev.diary.feature.diary.ui
+package pro.fateev.diary.feature.pin.ui
 
 import android.content.res.Configuration.UI_MODE_NIGHT_NO
 import android.content.res.Configuration.UI_MODE_NIGHT_YES

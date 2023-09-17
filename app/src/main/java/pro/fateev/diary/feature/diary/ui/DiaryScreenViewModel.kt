@@ -25,8 +25,8 @@ import kotlinx.coroutines.launch
 import pro.fateev.diary.feature.diary.domain.DiaryRepository
 import pro.fateev.diary.feature.diary.domain.model.DiaryEntry
 import pro.fateev.diary.feature.diary.domain.model.Media
+import pro.fateev.diary.navigation.Routes
 import pro.fateev.diary.navigation.routing.generatePath
-import pro.fateev.diary.ui.screen.Routes
 import pro.fateev.diary.ui.screen.common.BaseViewModel
 import javax.inject.Inject
 
@@ -62,6 +62,11 @@ class DiaryScreenViewModel @Inject constructor(private val repo: DiaryRepository
         viewModelScope.launch {
             navigateTo(Routes.ImagePreview.generatePath("id" to media.id))
         }
+    }
 
+    fun onSettingsClicked() {
+        viewModelScope.launch {
+            navigateTo(Routes.Settings.generatePath())
+        }
     }
 }

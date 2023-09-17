@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package pro.fateev.diary.ui.screen
+package pro.fateev.diary.navigation
 
 import androidx.navigation.NavType
-import pro.fateev.diary.feature.diary.ui.PINScreenViewModel
+import pro.fateev.diary.feature.pin.ui.PINScreenViewModel
 import pro.fateev.diary.navigation.routing.ScreenRoute
 
 object Routes {
@@ -51,4 +51,6 @@ object Routes {
     }
 
     object SetPINQuestion : ScreenRoute(routeDefinition = Definition("set-pin-question"))
+
+    object Settings : ScreenRoute(routeDefinition = Definition("settings"))
 }

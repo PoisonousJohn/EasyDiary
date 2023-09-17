@@ -36,8 +36,8 @@ import pro.fateev.diary.feature.diary.domain.DiaryRepository
 import pro.fateev.diary.feature.diary.domain.MediaRepository
 import pro.fateev.diary.feature.diary.domain.model.DiaryEntry
 import pro.fateev.diary.feature.diary.domain.model.Media
+import pro.fateev.diary.navigation.Routes
 import pro.fateev.diary.navigation.routing.generatePath
-import pro.fateev.diary.ui.screen.Routes
 import pro.fateev.diary.ui.screen.common.BaseViewModel
 import java.util.Date
 import javax.inject.Inject

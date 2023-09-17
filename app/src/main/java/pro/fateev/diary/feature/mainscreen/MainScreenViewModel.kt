@@ -14,30 +14,39 @@
  * limitations under the License.
  */
 
-package pro.fateev.diary.feature.diary.ui
+package pro.fateev.diary.feature.mainscreen
 
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import pro.fateev.diary.feature.auth.domain.AuthCheckResult
 import pro.fateev.diary.feature.auth.domain.AuthInteractor
+import pro.fateev.diary.feature.pin.ui.PINScreenViewModel
+import pro.fateev.diary.navigation.Routes
 import pro.fateev.diary.navigation.routing.generatePath
-import pro.fateev.diary.ui.screen.Routes
 import pro.fateev.diary.ui.screen.common.BaseViewModel
 import javax.inject.Inject
 
 @HiltViewModel
-class SetPINQuestionViewModel @Inject constructor(
+class MainScreenViewModel @Inject constructor(
     private val authInteractor: AuthInteractor
 ) : BaseViewModel() {
-    fun onAgree() {
-        viewModelScope.launch {
-            pop()
-            navigateTo(Routes.PIN().generatePath(Routes.PIN.modeKey to PINScreenViewModel.Mode.SetPIN))
+    fun onReturnToApp() {
+        if (authInteractor.onReturnToApp() == AuthCheckResult.NeedAuthorization) {
+            viewModelScope.launch {
+                navigateTo(Routes.PIN().generatePath(Routes.PIN.modeKey to PINScreenViewModel.Mode.Auth))
+            }
+            return
+        }
+
+        if (authInteractor.isSetPINQuestionNeeded()) {
+            viewModelScope.launch {
+                navigateTo(Routes.SetPINQuestion.generatePath())
+            }
         }
     }
 
-    fun onDisagree() {
-        authInteractor.onSetPINQuestionAsked()
-        pop()
+    fun onLeaveApp() {
+        authInteractor.onLeaveApp()
     }
 }

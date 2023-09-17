@@ -28,18 +28,20 @@ import pro.fateev.diary.feature.diary.ui.DiaryScreen
 import pro.fateev.diary.feature.diary.ui.DiaryScreenViewModel
 import pro.fateev.diary.feature.diary.ui.ImagePreview
 import pro.fateev.diary.feature.diary.ui.ImagePreviewViewModel
-import pro.fateev.diary.feature.diary.ui.MainScreenViewModel
-import pro.fateev.diary.feature.diary.ui.PINScreen
-import pro.fateev.diary.feature.diary.ui.PINScreenViewModel
-import pro.fateev.diary.feature.diary.ui.SetPINQuestionViewModel
 import pro.fateev.diary.feature.diary.ui.YesNoScreen
 import pro.fateev.diary.feature.diary.ui.entry.DiaryEntryScreen
 import pro.fateev.diary.feature.diary.ui.entry.DiaryEntryViewModel
+import pro.fateev.diary.feature.mainscreen.MainScreenViewModel
+import pro.fateev.diary.feature.pin.ui.PINScreen
+import pro.fateev.diary.feature.pin.ui.PINScreenViewModel
+import pro.fateev.diary.feature.pin.ui.SetPINQuestionViewModel
+import pro.fateev.diary.feature.settings.ui.SettingsScreen
+import pro.fateev.diary.feature.settings.ui.SettingsViewModel
 import pro.fateev.diary.navigation.NavigationComponent
 import pro.fateev.diary.navigation.NavigationController
 import pro.fateev.diary.navigation.NavigationControllerImpl
+import pro.fateev.diary.navigation.Routes
 import pro.fateev.diary.navigation.composable
-import pro.fateev.diary.ui.screen.Routes
 import pro.fateev.diary.ui.theme.AppTheme
 
 @AndroidEntryPoint
@@ -99,6 +101,13 @@ class MainActivity : ComponentActivity() {
                                 onPositive = vm::onAgree,
                                 onNegative = vm::onDisagree
                             )
+                        }
+
+                        composable<SettingsViewModel>(
+                            route = Routes.Settings,
+                            navigationController = controller
+                        ) { _, vm ->
+                            SettingsScreen(vm)
                         }
                     }
                 }

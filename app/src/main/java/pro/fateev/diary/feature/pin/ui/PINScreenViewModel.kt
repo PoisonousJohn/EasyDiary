@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package pro.fateev.diary.feature.diary.ui
+package pro.fateev.diary.feature.pin.ui
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
@@ -23,7 +23,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import pro.fateev.diary.feature.auth.domain.AuthInteractor
-import pro.fateev.diary.ui.screen.Routes
+import pro.fateev.diary.navigation.Routes
 import pro.fateev.diary.ui.screen.common.BaseViewModel
 import javax.inject.Inject
 
