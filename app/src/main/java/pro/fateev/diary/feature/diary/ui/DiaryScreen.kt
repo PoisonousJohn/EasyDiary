@@ -38,7 +38,6 @@ import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
-import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.rounded.DateRange
@@ -55,6 +54,7 @@ import pro.fateev.diary.extensions.FormattingExtensions.formatShort
 import pro.fateev.diary.feature.diary.domain.model.DiaryEntry
 import pro.fateev.diary.feature.diary.domain.model.Media
 import pro.fateev.diary.feature.diary.ui.components.ImageThumbnailCard
+import pro.fateev.diary.feature.diary.ui.components.MyTopAppBar
 import pro.fateev.diary.ui.theme.AppTheme
 import pro.fateev.diary.ui.theme.body2Secondary
 import java.util.Date
@@ -132,23 +132,23 @@ fun DiaryScreenContent(
         floatingActionButtonPosition = FabPosition.End,
         isFloatingActionButtonDocked = true,
         topBar = {
-            TopAppBar(
-                title = {},
-                actions = {
-                    IconButton(onClick = onSettingsClicked) {
-                        Icon(
-                            imageVector = Icons.Rounded.Settings,
-                            contentDescription = "Settings"
-                        )
-                    }
-                })
+            MyTopAppBar(actions = {
+                IconButton(onClick = onSettingsClicked) {
+                    Icon(
+                        imageVector = Icons.Rounded.Settings,
+                        contentDescription = "Settings"
+                    )
+                }
+            })
         },
         content = { padding ->
+            val cardPadding = 12.dp
             LazyColumn(
                 modifier = Modifier
                     .padding(padding)
+                    .padding(top = cardPadding)
                     .background(MaterialTheme.colors.background),
-                verticalArrangement = Arrangement.spacedBy(12.dp)
+                verticalArrangement = Arrangement.spacedBy(cardPadding)
             ) {
                 items(entries.size) { entryIndex ->
                     Column(
