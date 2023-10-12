@@ -56,9 +56,9 @@ fun SettingsScreen(vm: SettingsViewModel) {
 fun SettingsEntry(icon: ImageVector, text: String, onClick: () -> Unit = {}) {
     Row(
         modifier = Modifier
+            .clickable(onClick = onClick::invoke)
             .padding(12.dp)
-            .fillMaxWidth()
-            .clickable(onClick = onClick::invoke),
+            .fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Icon(imageVector = icon, text, modifier = Modifier.size(32.dp))
