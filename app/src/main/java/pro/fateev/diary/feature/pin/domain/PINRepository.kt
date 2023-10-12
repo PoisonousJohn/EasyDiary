@@ -16,11 +16,15 @@
 
 package pro.fateev.diary.feature.pin.domain
 
+import kotlinx.coroutines.flow.Flow
+
 interface PINRepository {
     fun isPINSet(): Boolean
+    fun isPINSetFlow(): Flow<Boolean>
     fun isPINQuestionAsked(): Boolean
     fun onPINQuestionAsked()
     fun setPIN(pin: String)
+    fun removePIN()
     fun isPINValid(pin: String): Boolean
     fun getPINLength(): Int
 }
