@@ -16,7 +16,31 @@
 
 package pro.fateev.diary.feature.settings.ui
 
+import androidx.lifecycle.viewModelScope
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.launch
+import pro.fateev.diary.feature.pin.domain.PINRepository
+import pro.fateev.diary.feature.pin.ui.PINScreenViewModel
+import pro.fateev.diary.navigation.Routes
+import pro.fateev.diary.navigation.routing.generatePath
 import pro.fateev.diary.ui.screen.common.BaseViewModel
+import javax.inject.Inject
 
-class SettingsViewModel : BaseViewModel() {
+@HiltViewModel
+class SettingsViewModel @Inject constructor(
+    private val _pinRepo: PINRepository,
+) : BaseViewModel() {
+    val isPINSet = _pinRepo.isPINSetFlow()
+
+    fun setPIN() {
+        viewModelScope.launch {
+            navigateTo(
+                Routes.PIN().generatePath(Routes.PIN.modeKey to PINScreenViewModel.Mode.SetPIN)
+            )
+        }
+    }
+
+    fun removePIN() {
+        _pinRepo.removePIN()
+    }
 }
