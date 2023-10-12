@@ -21,11 +21,16 @@ import androidx.compose.material.Colors
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.darkColors
 import androidx.compose.material.lightColors
+import androidx.compose.material.primarySurface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 
 val Colors.text
-    get() = if (isLight) AlmostBlack else AlmostWhite
+    get() = if (isLight) AlmostBlack300 else AlmostWhite
+
+val Colors.appBar
+    get() = if (isLight) primarySurface else AlmostBlack100
+
 @Suppress("UnusedReceiverParameter")
 val Colors.destructive
     get() = Terracotta
